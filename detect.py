@@ -33,7 +33,7 @@ def main():
         cv2_im_rgb = cv2.resize(cv2_im_rgb, inference_size)
         run_inference(interpreter, cv2_im_rgb.tobytes())
         objs = get_objects(interpreter, args.threshold)
-        cv2_im = append_objs_to_img(cv2_im, inference_size, objs, args.detector_backend)
+        cv2_im = append_objs_to_img(cv2_im, inference_size, objs)
 
         res = "test"
         cv2.imshow(res, cv2_im)
