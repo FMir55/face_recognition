@@ -28,7 +28,11 @@ def main():
         run_inference(interpreter, cv2_im_rgb.tobytes())
         objs = get_objects(interpreter, args.threshold)
         cv2_im = append_objs_to_img(cv2_im, inference_size, objs)
-        cv2.imshow('frame', cv2_im)
+
+        res = "test"
+        cv2.namedWindow(res, cv2.WND_PROP_FULLSCREEN)          
+        cv2.setWindowProperty(res, cv2.WND_PROP_FULLSCREEN, cv2.CV_WINDOW_FULLSCREEN)
+        cv2.imshow(res, cv2_im)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
