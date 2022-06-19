@@ -7,6 +7,7 @@ from pycoral.utils.edgetpu import make_interpreter, run_inference
 class Args:
     model = 'all_models/mobilenet_ssd_v2_face_quant_postprocess_edgetpu.tflite'
     camera_idx = 2
+    threshold = 0.1
 
 def main():
     '''
@@ -34,7 +35,7 @@ def main():
         cv2_im_rgb = cv2.resize(cv2_im_rgb, inference_size)
         run_inference(interpreter, cv2_im_rgb.tobytes())
         objs = get_objects(interpreter, args.threshold)[:args.top_k]
-        cv2_im = append_objs_to_img(cv2_im, inference_size, objs, labels)
+        cv2_im = append_objs_to_img(cv2_im, inference_size, objs)
         cv2.imshow('frame', cv2_im)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
