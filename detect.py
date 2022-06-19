@@ -78,7 +78,7 @@ def append_objs_to_img(cv2_im, inference_size, objs):
         attr = f"{gender}, {age}y, {emotion}"
         cv2_im = cv2.rectangle(cv2_im, (x0, y0), (x1, y1), (0, 255, 0), 2)
         # cv2.putText(bbox_array, text, (left+5, top-10), 0, 0.6, color_text, thickness=2)
-        cv2.putText(cv2_im, attr, (x+5, y-10), 0, 0.6, (0, 0, 255), thickness=2)
+        # cv2.putText(cv2_im, attr, (x0+5, y0-10), 0, 0.6, (0, 0, 255), thickness=2)
         cv2_im = cv2.putText(cv2_im, attr, (x0, y0+30),
                              cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 0, 0), 2)
     return cv2_im
