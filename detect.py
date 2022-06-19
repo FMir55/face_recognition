@@ -16,8 +16,8 @@ def main():
     inference_size = input_size(interpreter)
 
     cap = cv2.VideoCapture(args.camera_idx)
-    cap.set(3, 1280)
-    cap.set(4, 720)
+    cap.set(3, 1920)
+    cap.set(4, 1080)
 
     while cap.isOpened():
         ret, frame = cap.read()
