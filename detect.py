@@ -16,6 +16,8 @@ def main():
     inference_size = input_size(interpreter)
 
     cap = cv2.VideoCapture(args.camera_idx)
+    cap.set(3, 1280)
+    cap.set(4, 720)
 
     while cap.isOpened():
         ret, frame = cap.read()
@@ -30,8 +32,10 @@ def main():
         cv2_im = append_objs_to_img(cv2_im, inference_size, objs)
 
         res = "test"
+        '''
         cv2.namedWindow(res, cv2.WND_PROP_FULLSCREEN)          
         cv2.setWindowProperty(res, cv2.WND_PROP_FULLSCREEN, cv2.CV_WINDOW_FULLSCREEN)
+        '''
         cv2.imshow(res, cv2_im)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
