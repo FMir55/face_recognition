@@ -21,9 +21,9 @@ class Args:
 
 def get_models():
     return (
-        DeepFace.build_model('Emotion')
-        age_model = DeepFace.build_model('Age')
-        gender_model = DeepFace.build_model('Gender')
+        DeepFace.build_model('Emotion'),
+        DeepFace.build_model('Age'),
+        DeepFace.build_model('Gender')
     )
 
 args = Args()
