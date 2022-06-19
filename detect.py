@@ -1,13 +1,6 @@
 import cv2
 import numpy as np
-from deepface import DeepFace
-from deepface.commons import distance as dst
-from deepface.commons import functions
-from deepface.extendedmodels import Age
-
-'''
-from deepface.detectors import FaceDetector
-'''
+import requests
 from pycoral.adapters.common import input_size
 from pycoral.adapters.detect import get_objects
 from pycoral.utils.edgetpu import make_interpreter, run_inference
@@ -17,17 +10,8 @@ class Args:
     model = 'all_models/mobilenet_ssd_v2_face_quant_postprocess_edgetpu.tflite'
     camera_idx = 2
     threshold = 0.1
-    emotion_labels = ['Angry', 'Disgust', 'Fear', 'Happy', 'Sad', 'Surprise', 'Neutral']
-
-def get_models():
-    return (
-        DeepFace.build_model('Emotion'),
-        DeepFace.build_model('Age'),
-        DeepFace.build_model('Gender')
-    )
 
 args = Args()
-emotion_model, age_model, gender_model = get_models()
 
 def main():
     
@@ -59,25 +43,19 @@ def main():
     cap.release()
     cv2.destroyAllWindows()
 
-def get_face_attr(crop_bgr):
-    gray_img = functions.preprocess_face(img = crop_bgr, target_size = (48, 48), grayscale = True, enforce_detection = False, detector_backend = 'ssd')
-    face_224 = functions.preprocess_face(img = crop_bgr, target_size = (224, 224), grayscale = False, enforce_detection = False, detector_backend = 'ssd')
+def get_face_info(img_bgr, fname='sample.jpg'):
+  _, encoded_image = cv2.imencode('.jpg', img_bgr)
 
-    # emotion
-    emotion_predictions = emotion_model.predict(gray_img)[0,:]
-    emotion = args.emotion_labels[np.argmax(emotion_predictions)]
+  files = {
+      "image": (fname, encoded_image.tobytes())
+  }
 
-    # age
-    age_predictions = age_model.predict(face_224)[0,:]
-    apparent_age = Age.findApparentAge(age_predictions)
-    age = int(round(apparent_age))
-
-    # gender
-    gender_prediction = gender_model.predict(face_224)[0,:]
-    idx = np.argmax(gender_prediction)
-    gender = "Female" if idx == 0 else "Male"
-
-    return emotion, age, gender
+  response = requests.post(
+      "https://heartrate.ap-mic.com/get_face_info",
+      files=files
+  )
+  
+  return response.json()
 
 def append_objs_to_img(cv2_im, inference_size, objs):
     cv2_im_clean = cv2_im.copy()
@@ -92,7 +70,9 @@ def append_objs_to_img(cv2_im, inference_size, objs):
         label = '{}% {}'.format(percent, 'face')
 
         crop_bgr = cv2_im_clean[y0:y1, x0:x1]
-        emotion, age, gender = get_face_attr(crop_bgr)
+
+        face_info = get_face_info(crop_bgr)
+        emotion, age, gender = face_info.values()
 
         # draw
         attr = f"{gender}, {age}y, {emotion}"
