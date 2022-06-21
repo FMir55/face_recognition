@@ -16,7 +16,7 @@ def get_legal_fname(path_identity, identity):
 def get_suspects(path):
   suspects = []
   #check passed db folder exists
-  if path.isdir():
+  if path.is_dir():
     for r, d, f in os.walk(str(path)): # r=root, d=directories, f = files
       for file in f:
         if ('.jpg' in file):
