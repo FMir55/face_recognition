@@ -25,5 +25,5 @@ def get_suspects(path):
           #print(exact_path)
           suspects.append(exact_path)
   if len(suspects) == 0:
-    print("WARNING: There is no image in this path ( ", path_face_db,") . Face recognition will not be performed.")
+    print("WARNING: There is no image in this path ( ", str(path),") . Face recognition will not be performed.")
   return suspects
