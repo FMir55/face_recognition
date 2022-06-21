@@ -21,7 +21,7 @@ class Args:
     threshold = 0.1
 
     # tracker
-    max_distance_between_points = 150 
+    max_distance_between_points = 200 
     initialization_delay = 10
 
     # capture
@@ -190,7 +190,7 @@ def main():
                         id2identity[id] = (suspect_name, best_similarity)
                         del id2cnt[id]
         
-        for id in id2cnt: 
+        for id in id2identity: 
             if id not in ids:
                 del id2identity[id]
 
