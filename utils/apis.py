@@ -61,4 +61,4 @@ def get_attr(id2info, crop_bgr):
         except Exception as err:
             print(str(err))
             emotion, age, gender = '', '', ''
-    return = f"{gender}, {age}y, {emotion}"
+    return f"{gender}, {age}y, {emotion}"
