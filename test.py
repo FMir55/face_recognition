@@ -14,12 +14,13 @@ def main():
     # 160 160
     inference_size = input_size(interpreter)
 
-    '''
+    cv2_im = cv2.imread('face_db/a/a0.jpg')
     cv2_im_rgb = cv2.cvtColor(cv2_im, cv2.COLOR_BGR2RGB)
     cv2_im_rgb = cv2.resize(cv2_im_rgb, inference_size)
     '''
     import numpy as np
     cv2_im_rgb = np.ones((160, 160, 3)) * 125
+    '''
     run_inference(interpreter, cv2_im_rgb.tobytes())
     embedding = output_tensor(interpreter, -1)
     print(embedding)
