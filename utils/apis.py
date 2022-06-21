@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-import pandas as pd
+# import pandas as pd
 import requests
 
 
@@ -32,6 +32,7 @@ def get_embedding(img, fname = 'sample.jpg'):
     
     return np.array(response.json()['embedding'])
 
+"""
 def get_embeddings(suspects):
   embeddings = []
   for suspect in suspects:
@@ -42,6 +43,13 @@ def get_embeddings(suspects):
             get_embedding(img)
         )
     )
+    '''
     df = pd.DataFrame(embeddings, columns = ['suspect', 'embedding'])
     df['distance_metric'] = distance_metric
     return df
+    '''
+    return {
+
+    }
+"""
+
