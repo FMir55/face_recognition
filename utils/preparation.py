@@ -35,7 +35,7 @@ def prune(x0, y0, x1, y1):
   y_mid = np.mean([y0, y1])
   h = y1 - y0
   w = h * 0.6
-  h *= 0.7
+  h *= 0.75
 
   return (
     max(int(x_mid - w/2), x0),

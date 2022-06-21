@@ -6,7 +6,8 @@ from pycoral.adapters.common import input_size
 from pycoral.adapters.detect import get_objects
 from pycoral.utils.edgetpu import make_interpreter, run_inference
 
-from utils.apis import get_attr, get_embedding, get_embeddings, get_face_info
+from utils.apis import get_attr, get_embedding, get_embeddings
+from utils.draw import draw_identity
 from utils.preparation import clean_counter, get_suspects, prune
 from utils.similarity import findDistance, get_label
 from utils.tracker import convert_detection, get_tracker
@@ -71,7 +72,6 @@ def main():
         face_names = []
         ret, cv2_im = cap.read()
         if not ret: break
-        resolution_y, resolution_x = cv2_im.shape[:2]
 
         cv2_im_rgb = cv2.cvtColor(cv2_im, cv2.COLOR_BGR2RGB)
         cv2_im_rgb = cv2.resize(cv2_im_rgb, inference_size)
@@ -95,38 +95,23 @@ def main():
             cv2.rectangle(cv2_im, (x0, y0), (x1, y1), (0, 255, 0), 2)
 
             if id2warmup[id] >= args.warmup_delay:
-                '''
-                if id in id2info: 
-                    emotion, age, gender = id2info[id].values()
-                else:
-                    try:
-                        face_info = get_face_info(crop_bgr)
-                        emotion, age, gender = face_info.values()
-                        id2info[id] = {
-                            "emotion" : emotion, 
-                            "age" : age, 
-                            "gender" : gender
-                        }
-                    except Exception as err:
-                        print(str(err))
-                        emotion, age, gender = '', '', ''
-                attr = f"{gender}, {age}y, {emotion}"
-                '''
                 attr = get_attr(id2info, crop_bgr)
 
                 # At least one template exists
                 if df is not None and df.shape[0] > 0:
                     if id in id2identity:
                         suspect_name, label, best_similarity = id2identity[id]
+                        face_names.append(label)
                         if suspect_name:
+                            label += f"_{best_similarity}%"
+                            draw_identity(suspect_name, label, cv2_im, (x0, y0, x1, y1), args)
+                            '''
                             display_img = cv2.imread(suspect_name)
                             display_img = cv2.resize(display_img, (args.pivot_img_size, args.pivot_img_size))
 
-                            face_names.append(label)
-                            label += f"_{best_similarity}%"
-
                             # draw
                             try:
+                                resolution_y, resolution_x = cv2_im.shape[:2]
                                 w = x1-x0
                                 if y0 - args.pivot_img_size > 0 and x1 + args.pivot_img_size < resolution_x:
                                     #top right
@@ -184,6 +169,7 @@ def main():
                                     cv2.line(cv2_im, (x0+int(w/2)+int(w/4), y1+int(args.pivot_img_size/2)), (x1, y1+int(args.pivot_img_size/2)), (67,67,67),1)
                             except Exception as err:
                                 print(str(err))
+                            '''
 
                         # Unknown checked
                         else:
