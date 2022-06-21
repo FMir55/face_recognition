@@ -29,6 +29,7 @@ class Args:
     # msg
     msg_face = "face detected"
     msg_no_face = "No face detected"
+    msg_ask_keep = "Wanna keep this face?(y/n)"
 
 args = Args()
 
@@ -76,8 +77,9 @@ def main():
         if cv2.waitKey(1) & 0xFF == ord('q'):
             if res == args.msg_face:
                 print(f'Capturing identity: {identity}')
-                response = input('Wanna keep this face?(y/n)\n')
-                if response == 'y':
+                cv2.destroyAllWindows()
+                cv2.imshow(args.msg_ask_keep, cv2_im)
+                if cv2.waitKey(0) & 0xFF == ord('y'):
                     path_identity = args.path_face_db / Path(identity)
                     mkdir(path_identity)
                     fname = get_legal_fname(path_identity, identity)
@@ -85,7 +87,7 @@ def main():
                     cv2.imwrite(str(fname), crop_bgr)
                     print(f"Face template built: {str(fname)}")
                     break
-                else:
+                elif cv2.waitKey(0) & 0xFF == ord('n'):
                     print('Face template dropped')
                     cv2.destroyAllWindows()
             else:
