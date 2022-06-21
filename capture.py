@@ -83,9 +83,9 @@ def main():
                     # save image
                     cv2.imwrite(str(fname), crop_bgr)
                     print(f"Face template built: {str(fname)}")
-                    break
                 else:
                     print('Face template dropped')
+                break
             else:
                 print(res)
             time.sleep(5)

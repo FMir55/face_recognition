@@ -73,7 +73,6 @@ def main():
         scale_x, scale_y = width / inference_size[0], height / inference_size[1]
         detections = [convert_detection(obj, scale_x, scale_y) for obj in objs]
         tracked_objects = tracker.update(detections=detections)
-        face_names = []
         for tracked_object in tracked_objects:
             id = tracked_object.id
             x0, y0, x1, y1 = tracked_object.last_detection.points.flatten()
@@ -109,7 +108,6 @@ def main():
                 # collect results
                 label = suspect_name.split("/")[-1].replace(".jpg", "")
                 label = re.sub('[0-9]', '', label) + f"_{best_simlarity}%"
-                face_names.append(label)
 
                 # draw
                 try:
@@ -176,8 +174,7 @@ def main():
             cv2.rectangle(cv2_im, (x0, y0), (x1, y1), (0, 255, 0), 2)
             cv2.putText(cv2_im, attr, (x0, y0+30), args.font, 1.0, (255, 0, 0), 2)
  
-        res = '-'.join(face_names)
-        cv2.imshow(res, cv2_im)
+        cv2.imshow('frame', cv2_im)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
