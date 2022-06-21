@@ -48,7 +48,7 @@ def main():
 
     # tracker
     tracker = get_tracker(args.initialization_delay, args.max_distance_between_points)
-
+    prev_res = args.msg_no_face
     while cap.isOpened():
         ret, cv2_im = cap.read()
         if not ret: break
