@@ -99,9 +99,11 @@ def main():
 
                 # At least one template exists
                 if df is not None and df.shape[0] > 0:
+                    # Already extracted
                     if id in id2identity:
                         suspect_name, label, best_similarity = id2identity[id]
                         face_names.append(label)
+                        # Identity checked
                         if suspect_name:
                             label += f"_{best_similarity}%"
                             draw_identity(suspect_name, label, cv2_im, (x0, y0, x1, y1), args)
@@ -110,6 +112,7 @@ def main():
                         else:
                             attr += f"({label})"
 
+                    # Not yet
                     else:
                         try:
                             df['embedding_sample'] = [get_embedding(crop_bgr)] * len(df)
@@ -140,7 +143,7 @@ def main():
         
         clean_counter(id2warmup, ids)
 
-        res = '_'.join(face_names) + "(Press 'q' to quit)"
+        res = ("No identity detected" if len(face_names)==0 else '_'.join(face_names)) + "(Press 'q' to quit)"
         if res != prev_res: cv2.destroyAllWindows()
         cv2.imshow(res, cv2_im)
         if cv2.waitKey(1) & 0xFF == ord('q'):
