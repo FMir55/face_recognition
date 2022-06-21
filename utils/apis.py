@@ -32,7 +32,7 @@ def get_embedding(img, fname = 'sample.jpg'):
     
     return np.array(response.json()['embedding'])
 
-def get_embeddings(suspects):
+def get_embeddings(suspects, distance_metric="cosine"):
   embeddings = []
   for suspect in suspects:
     img = cv2.imread(suspect)
