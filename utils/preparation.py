@@ -43,3 +43,8 @@ def prune(x0, y0, x1, y1):
     min(int(x_mid + w/2), x1),
     min(int(y_mid + h/2), y1)
   )
+
+def clean_counter(cnt, ids):
+  for id in list(cnt.keys()): 
+    if id not in ids:
+      del cnt[id]
