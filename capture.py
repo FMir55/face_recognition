@@ -20,7 +20,7 @@ class Args:
     threshold = 0.1
 
     # tracker
-    max_distance_between_points = 100 
+    max_distance_between_points = 150 
     initialization_delay = 10
 
     # capture
