@@ -7,7 +7,7 @@ from pycoral.adapters.detect import get_objects
 from pycoral.utils.edgetpu import make_interpreter, run_inference
 
 from utils.apis import get_embedding, get_embeddings, get_face_info
-from utils.preparation import get_suspects
+from utils.preparation import get_suspects, prune
 from utils.similarity import findDistance, get_label
 from utils.tracker import convert_detection, get_tracker
 
@@ -86,6 +86,7 @@ def main():
             ids.append(id)
             if id not in id2cnt: id2cnt[id] = Counter()
             x0, y0, x1, y1 = tracked_object.last_detection.points.flatten()
+            x0, y0, x1, y1 = prune(x0, y0, x1, y1)
             crop_bgr = cv2_im[y0:y1, x0:x1]
 
             if id in id2info: 
