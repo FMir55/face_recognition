@@ -4,7 +4,8 @@ from pycoral.adapters.common import input_size
 from pycoral.adapters.detect import get_objects
 from pycoral.utils.edgetpu import make_interpreter, run_inference
 
-from utils.apis import get_embedding, get_embeddings, get_face_info
+# from utils.apis import get_embedding, get_embeddings, get_face_info
+from utils.apis import get_embedding, get_face_info
 from utils.similarity import findDistance
 from utils.tracker import convert_detection, get_tracker
 
