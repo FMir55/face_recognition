@@ -39,6 +39,8 @@ def main():
 
     # get face embeddings
     df = get_embeddings_v2(suspects, interpreter_emb, inference_size_emb)
+    print(df.to_dict())
+    return 0
 
     id2info = {}
     if df is not None and df.shape[0] > 0: id2identity = {}
