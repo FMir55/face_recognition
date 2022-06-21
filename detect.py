@@ -29,7 +29,7 @@ class Args:
 
     # match face
     similarity_thresh = 0.7
-    match_delay = 10
+    match_delay = 5
 
     # draw
     font = cv2.FONT_HERSHEY_SIMPLEX
@@ -192,8 +192,7 @@ def main():
                                             best_similarity)
                         del id2cnt[id]
         
-        ks = id2identity.keys()
-        for id in ks: 
+        for id in list(id2identity.keys()): 
             if id not in ids:
                 del id2identity[id]
 
