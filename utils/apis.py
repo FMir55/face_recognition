@@ -42,7 +42,7 @@ def get_embeddings(suspects, distance_metric="cosine"):
             get_embedding(img)
         )
     )
-    df = pd.DataFrame(embeddings, columns = ['suspect', 'embedding'])
+    df = pd.DataFrame(embeddings, columns = ['suspect', 'embedding_template'])
     df['distance_metric'] = distance_metric
     return df
 
