@@ -99,7 +99,8 @@ def main():
                         "age" : age, 
                         "gender" : gender
                     }
-                except:
+                except Exception as err:
+                    print(str(err))
                     emotion, age, gender = '', '', ''
             # draw
             attr = f"{gender}, {age}y, {emotion}"
@@ -178,22 +179,24 @@ def main():
                         print(str(err))
 
                 else:
-                    df['embedding_sample'] = [get_embedding(crop_bgr)] * len(df)
-                    df['distance'] = df.apply(findDistance, axis = 1)
-                    candidate = df.sort_values(by = ["distance"]).iloc[0]
-                    suspect_name = candidate['suspect']
-                    best_distance = candidate['distance']
-                    best_similarity = int((1 - best_distance)* 100)
+                    try:
+                        df['embedding_sample'] = [get_embedding(crop_bgr)] * len(df)
+                        df['distance'] = df.apply(findDistance, axis = 1)
+                        candidate = df.sort_values(by = ["distance"]).iloc[0]
+                        suspect_name = candidate['suspect']
+                        best_distance = candidate['distance']
+                        best_similarity = int((1 - best_distance)* 100)
 
-                    label = get_label(suspect_name) if best_similarity >= args.similarity_thresh else 'Unknown'
-                    id2cnt[id][label] += 1
-                        
-                    print(id2cnt[id])
-                    if id2cnt[id][label] >= args.match_delay:
-                        id2identity[id] = (suspect_name if label != 'Unknown' else None, 
-                                            label,
-                                            best_similarity)
-                        del id2cnt[id]
+                        label = get_label(suspect_name) if best_similarity >= args.similarity_thresh else 'Unknown'
+                        id2cnt[id][label] += 1
+                        print(id, id2cnt[id].most_common())
+                        if id2cnt[id][label] >= args.match_delay:
+                            id2identity[id] = (suspect_name if label != 'Unknown' else None, 
+                                                label,
+                                                best_similarity)
+                            del id2cnt[id]
+                    except Exception as err:
+                        print(str(err))
 
             # 高乘載管制:1
             break

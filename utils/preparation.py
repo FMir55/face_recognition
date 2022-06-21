@@ -2,6 +2,8 @@ import os
 import shutil
 from pathlib import Path
 
+import numpy as np
+
 
 def mkdir(path):
   if not path.is_dir():
@@ -27,3 +29,15 @@ def get_suspects(path):
   if len(suspects) == 0:
     print("WARNING: There is no image in this path ( ", str(path),") . Face recognition will not be performed.")
   return suspects
+
+def prune(x0, y0, x1, y1):
+  x_mid = np.mean([x0, x1])
+  h = y1 - y0
+  w = h * 0.75
+
+  return (
+    max(int(x_mid - w/2), x0),
+    y0, 
+    min(int(x_mid + w/2), x1)
+    y1
+  )

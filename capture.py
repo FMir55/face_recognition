@@ -7,7 +7,7 @@ from pycoral.adapters.common import input_size
 from pycoral.adapters.detect import get_objects
 from pycoral.utils.edgetpu import make_interpreter, run_inference
 
-from utils.preparation import get_legal_fname, mkdir
+from utils.preparation import get_legal_fname, mkdir, prune
 from utils.tracker import convert_detection, get_tracker
 
 
@@ -65,6 +65,7 @@ def main():
         tracked_objects = tracker.update(detections=detections)
         for tracked_object in tracked_objects:
             x0, y0, x1, y1 = tracked_object.last_detection.points.flatten()
+            x0, y0, x1, y1 = prune(x0, y0, x1, y1)
             crop_bgr = cv2_im[y0:y1, x0:x1]
             
             # draw
