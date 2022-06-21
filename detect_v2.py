@@ -1,13 +1,14 @@
 from collections import Counter
 
 import cv2
-from pycoral.adapters.common import input_size, output_tensor
+from pycoral.adapters.common import input_size
 from pycoral.utils.edgetpu import make_interpreter
 
 from utils.apis import get_attr
 from utils.config import Args
 from utils.draw import draw_identity
-from utils.inference import inference_detection
+from utils.inference import (get_embeddings_v2, inference_detection,
+                             inference_embedding)
 from utils.preparation import clean_counter, get_suspects, prune
 from utils.similarity import findDistance, get_label
 from utils.tracker import convert_detection, get_tracker
@@ -37,8 +38,7 @@ def main():
     suspects = get_suspects(args.path_face_db)
 
     # get face embeddings
-    # df = get_embeddings(suspects)
-
+    df = get_embeddings_v2(suspects, interpreter_emb, inference_size_emb)
 
     id2info = {}
     if df is not None and df.shape[0] > 0: id2identity = {}
@@ -50,7 +50,7 @@ def main():
         ret, cv2_im = cap.read()
         if not ret: break
 
-        objs = inference_detection(cv2_im, interpreter_detection, inference_size_detection)
+        objs = inference_detection(cv2_im, interpreter_detection, inference_size_detection, args.threshold)
 
         height, width, _ = cv2_im.shape
         scale_x, scale_y = width / inference_size_detection[0], height / inference_size_detection[1]
@@ -89,7 +89,7 @@ def main():
                     # Not yet
                     else:
                         try:
-                            df['embedding_sample'] = [get_embedding(crop_bgr)] * len(df)
+                            df['embedding_sample'] = [inference_embedding(crop_bgr, interpreter_emb, inference_size_emb)] * len(df)
                             df['distance'] = df.apply(findDistance, axis = 1)
                             candidate = df.sort_values(by = ["distance"]).iloc[0]
                             suspect_name = candidate['suspect']
