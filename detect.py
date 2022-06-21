@@ -63,9 +63,9 @@ def main():
     id2info = {}
     if df is not None and df.shape[0] > 0: id2identity = {}
     prev_res = args.msg_no_face
-    face_names = []
     # process_this_frame = False
     while cap.isOpened():
+        face_names = []
         # process_this_frame = ~process_this_frame
         ret, cv2_im = cap.read()
         if not ret: break
