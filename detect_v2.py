@@ -20,11 +20,9 @@ def main():
     cap.set(3, 1920)
     cap.set(4, 1080)
 
-    '''
     # face detection
     interpreter_detection = make_interpreter(args.model_detection)
     interpreter_detection.allocate_tensors()
-    '''
 
     # face embedding
     interpreter_emb = make_interpreter(args.model_emb)
