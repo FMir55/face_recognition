@@ -89,7 +89,6 @@ def main():
             elif cv2.waitKey(0) & 0xFF == ord('n'):
                 print('Face template dropped')
                 cv2.destroyAllWindows()
-        if res != prev_res: cv2.destroyAllWindows()
         prev_res = res
         
     cap.release()
