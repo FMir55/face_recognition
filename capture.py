@@ -74,7 +74,7 @@ def main():
         res = args.msg_no_face if len(tracked_objects) == 0 else args.msg_face
         
         cv2.imshow(res, cv2_im)
-        if cv2.waitKey(1) & 0xFF == ord('q') & res == args.msg_face:
+        if cv2.waitKey(1) & 0xFF == ord('q') and res == args.msg_face:
             print(f'Capturing identity: {identity}')
             cv2.destroyAllWindows()
             cv2.imshow(args.msg_ask_keep, cv2_im)
