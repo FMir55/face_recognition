@@ -106,12 +106,11 @@ def main():
             # At least one template exists
             if df is not None and df.shape[0] > 0:
                 if id in id2identity:
-                    suspect_name, best_similarity = id2identity[id]
+                    suspect_name, label, best_similarity = id2identity[id]
 
                     display_img = cv2.imread(suspect_name)
                     display_img = cv2.resize(display_img, (args.pivot_img_size, args.pivot_img_size))
 
-                    label = get_label(suspect_name)
                     face_names.append(label)
                     label += f"_{best_similarity}%"
 
@@ -186,8 +185,11 @@ def main():
                     label = get_label(suspect_name) if best_similarity >= args.similarity_thresh else 'Unknown'
                     id2cnt[id][label] += 1
                         
+                    print(id2cnt[id])
                     if id2cnt[id][label] >= args.match_delay:
-                        id2identity[id] = (suspect_name, best_similarity)
+                        id2identity[id] = (suspect_name if label != 'Unknown' else None, 
+                                            label,
+                                            best_similarity)
                         del id2cnt[id]
         
         for id in id2identity: 
