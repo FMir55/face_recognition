@@ -103,81 +103,82 @@ def main():
                 except Exception as err:
                     print(str(err))
                     emotion, age, gender = '', '', ''
-            # draw
             attr = f"{gender}, {age}y, {emotion}"
-            cv2.rectangle(cv2_im, (x0, y0), (x1, y1), (0, 255, 0), 2)
-            cv2.putText(cv2_im, attr, (x0, y0+30), args.font, 1.0, (255, 0, 0), 2)
 
             # At least one template exists
             if df is not None and df.shape[0] > 0:
                 if id in id2identity:
                     suspect_name, label, best_similarity = id2identity[id]
+                    if suspect_name:
+                        display_img = cv2.imread(suspect_name)
+                        display_img = cv2.resize(display_img, (args.pivot_img_size, args.pivot_img_size))
 
-                    display_img = cv2.imread(suspect_name)
-                    display_img = cv2.resize(display_img, (args.pivot_img_size, args.pivot_img_size))
+                        face_names.append(label)
+                        label += f"_{best_similarity}%"
 
-                    face_names.append(label)
-                    label += f"_{best_similarity}%"
+                        # draw
+                        try:
+                            w = x1-x0
+                            if y0 - args.pivot_img_size > 0 and x1 + args.pivot_img_size < resolution_x:
+                                #top right
+                                cv2_im[y0 - args.pivot_img_size:y0, x1:x1+args.pivot_img_size, :3] = display_img
 
-                    # draw
-                    try:
-                        w = x1-x0
-                        if y0 - args.pivot_img_size > 0 and x1 + args.pivot_img_size < resolution_x:
-                            #top right
-                            cv2_im[y0 - args.pivot_img_size:y0, x1:x1+args.pivot_img_size, :3] = display_img
+                                overlay = cv2_im.copy(); opacity = 0.4
+                                cv2.rectangle(cv2_im,(x1,y0),(x1+args.pivot_img_size, y0+20),(46,200,255),cv2.FILLED)
+                                cv2.addWeighted(overlay, opacity, cv2_im, 1 - opacity, 0, cv2_im)
+                                cv2.putText(cv2_im, label, (x1, y0+10), args.font, 0.5, args.text_color, 1)
 
-                            overlay = cv2_im.copy(); opacity = 0.4
-                            cv2.rectangle(cv2_im,(x1,y0),(x1+args.pivot_img_size, y0+20),(46,200,255),cv2.FILLED)
-                            cv2.addWeighted(overlay, opacity, cv2_im, 1 - opacity, 0, cv2_im)
-                            cv2.putText(cv2_im, label, (x1, y0+10), args.font, 0.5, args.text_color, 1)
+                                #connect face and text
+                                cv2.line(cv2_im,(int((x0+x1)/2), y0), (x0+3*int((x1-x0)/4), y0-int(args.pivot_img_size/2)),(67,67,67),1)
+                                cv2.line(cv2_im, (x0+3*int((x1-x0)/4), y0-int(args.pivot_img_size/2)), (x1, y0 - int(args.pivot_img_size/2)), (67,67,67),1)
 
-                            #connect face and text
-                            cv2.line(cv2_im,(int((x0+x1)/2), y0), (x0+3*int((x1-x0)/4), y0-int(args.pivot_img_size/2)),(67,67,67),1)
-                            cv2.line(cv2_im, (x0+3*int((x1-x0)/4), y0-int(args.pivot_img_size/2)), (x1, y0 - int(args.pivot_img_size/2)), (67,67,67),1)
+                            elif y1 + args.pivot_img_size < resolution_y and x0 - args.pivot_img_size > 0:
+                                #bottom left
+                                cv2_im[y1:y1+args.pivot_img_size, x0-args.pivot_img_size:x0, :3] = display_img
 
-                        elif y1 + args.pivot_img_size < resolution_y and x0 - args.pivot_img_size > 0:
-                            #bottom left
-                            cv2_im[y1:y1+args.pivot_img_size, x0-args.pivot_img_size:x0, :3] = display_img
+                                overlay = cv2_im.copy(); opacity = 0.4
+                                cv2.rectangle(cv2_im,(x0-args.pivot_img_size,y1-20),(x0, y1),(46,200,255),cv2.FILLED)
+                                cv2.addWeighted(overlay, opacity, cv2_im, 1 - opacity, 0, cv2_im)
 
-                            overlay = cv2_im.copy(); opacity = 0.4
-                            cv2.rectangle(cv2_im,(x0-args.pivot_img_size,y1-20),(x0, y1),(46,200,255),cv2.FILLED)
-                            cv2.addWeighted(overlay, opacity, cv2_im, 1 - opacity, 0, cv2_im)
+                                cv2.putText(cv2_im, label, (x0 - args.pivot_img_size, y1-10), args.font, 0.5, args.text_color, 1)
 
-                            cv2.putText(cv2_im, label, (x0 - args.pivot_img_size, y1-10), args.font, 0.5, args.text_color, 1)
+                                #connect face and text
+                                cv2.line(cv2_im,(x0+int(w/2), y1), (x0+int(w/2)-int(w/4), y1+int(args.pivot_img_size/2)),(67,67,67),1)
+                                cv2.line(cv2_im, (x0+int(w/2)-int(w/4), y1+int(args.pivot_img_size/2)), (x0, y1+int(args.pivot_img_size/2)), (67,67,67),1)
 
-                            #connect face and text
-                            cv2.line(cv2_im,(x0+int(w/2), y1), (x0+int(w/2)-int(w/4), y1+int(args.pivot_img_size/2)),(67,67,67),1)
-                            cv2.line(cv2_im, (x0+int(w/2)-int(w/4), y1+int(args.pivot_img_size/2)), (x0, y1+int(args.pivot_img_size/2)), (67,67,67),1)
+                            elif y0 - args.pivot_img_size > 0 and x0 - args.pivot_img_size > 0:
+                                #top left
+                                cv2_im[y0-args.pivot_img_size:y0, x0-args.pivot_img_size:x0, :3] = display_img
 
-                        elif y0 - args.pivot_img_size > 0 and x0 - args.pivot_img_size > 0:
-                            #top left
-                            cv2_im[y0-args.pivot_img_size:y0, x0-args.pivot_img_size:x0, :3] = display_img
+                                overlay = cv2_im.copy(); opacity = 0.4
+                                cv2.rectangle(cv2_im,(x0 - args.pivot_img_size,y0),(x0, y0+20),(46,200,255),cv2.FILLED)
+                                cv2.addWeighted(overlay, opacity, cv2_im, 1 - opacity, 0, cv2_im)
 
-                            overlay = cv2_im.copy(); opacity = 0.4
-                            cv2.rectangle(cv2_im,(x0 - args.pivot_img_size,y0),(x0, y0+20),(46,200,255),cv2.FILLED)
-                            cv2.addWeighted(overlay, opacity, cv2_im, 1 - opacity, 0, cv2_im)
+                                cv2.putText(cv2_im, label, (x0 - args.pivot_img_size, y0+10), args.font, 0.5, args.text_color, 1)
 
-                            cv2.putText(cv2_im, label, (x0 - args.pivot_img_size, y0+10), args.font, 0.5, args.text_color, 1)
+                                #connect face and text
+                                cv2.line(cv2_im,(x0+int(w/2), y0), (x0+int(w/2)-int(w/4), y0-int(args.pivot_img_size/2)),(67,67,67),1)
+                                cv2.line(cv2_im, (x0+int(w/2)-int(w/4), y0-int(args.pivot_img_size/2)), (x0, y0 - int(args.pivot_img_size/2)), (67,67,67),1)
 
-                            #connect face and text
-                            cv2.line(cv2_im,(x0+int(w/2), y0), (x0+int(w/2)-int(w/4), y0-int(args.pivot_img_size/2)),(67,67,67),1)
-                            cv2.line(cv2_im, (x0+int(w/2)-int(w/4), y0-int(args.pivot_img_size/2)), (x0, y0 - int(args.pivot_img_size/2)), (67,67,67),1)
+                            elif x1+args.pivot_img_size < resolution_x and y1 + args.pivot_img_size < resolution_y:
+                                #bottom right
+                                cv2_im[y1:y1+args.pivot_img_size, x1:x1+args.pivot_img_size, :3] = display_img
 
-                        elif x1+args.pivot_img_size < resolution_x and y1 + args.pivot_img_size < resolution_y:
-                            #bottom right
-                            cv2_im[y1:y1+args.pivot_img_size, x1:x1+args.pivot_img_size, :3] = display_img
+                                overlay = cv2_im.copy(); opacity = 0.4
+                                cv2.rectangle(cv2_im,(x1,y1-20),(x1+args.pivot_img_size, y1),(46,200,255),cv2.FILLED)
+                                cv2.addWeighted(overlay, opacity, cv2_im, 1 - opacity, 0, cv2_im)
 
-                            overlay = cv2_im.copy(); opacity = 0.4
-                            cv2.rectangle(cv2_im,(x1,y1-20),(x1+args.pivot_img_size, y1),(46,200,255),cv2.FILLED)
-                            cv2.addWeighted(overlay, opacity, cv2_im, 1 - opacity, 0, cv2_im)
+                                cv2.putText(cv2_im, label, (x1, y1-10), args.font, 0.5, args.text_color, 1)
 
-                            cv2.putText(cv2_im, label, (x1, y1-10), args.font, 0.5, args.text_color, 1)
+                                #connect face and text
+                                cv2.line(cv2_im,(x0+int(w/2), y1), (x0+int(w/2)+int(w/4), y1+int(args.pivot_img_size/2)),(67,67,67),1)
+                                cv2.line(cv2_im, (x0+int(w/2)+int(w/4), y1+int(args.pivot_img_size/2)), (x1, y1+int(args.pivot_img_size/2)), (67,67,67),1)
+                        except Exception as err:
+                            print(str(err))
 
-                            #connect face and text
-                            cv2.line(cv2_im,(x0+int(w/2), y1), (x0+int(w/2)+int(w/4), y1+int(args.pivot_img_size/2)),(67,67,67),1)
-                            cv2.line(cv2_im, (x0+int(w/2)+int(w/4), y1+int(args.pivot_img_size/2)), (x1, y1+int(args.pivot_img_size/2)), (67,67,67),1)
-                    except Exception as err:
-                        print(str(err))
+                    # Unknown checked
+                    else:
+                        attr += f"({label})"
 
                 else:
                     try:
@@ -190,7 +191,7 @@ def main():
 
                         label = get_label(suspect_name) if best_similarity >= args.similarity_thresh else 'Unknown'
                         id2cnt[id][label] += 1
-                        print(id, id2cnt[id].most_common())
+                        print(id, label, best_similarity, id2cnt[id].most_common())
                         if id2cnt[id][label] >= args.match_delay:
                             id2identity[id] = (suspect_name if label != 'Unknown' else None, 
                                                 label,
@@ -198,6 +199,10 @@ def main():
                             del id2cnt[id]
                     except Exception as err:
                         print(str(err))
+
+            # draw
+            cv2.rectangle(cv2_im, (x0, y0), (x1, y1), (0, 255, 0), 2)
+            cv2.putText(cv2_im, attr, (x0, y0+30), args.font, 1.0, (255, 0, 0), 2)
 
             # 高乘載管制:1
             break
