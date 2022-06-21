@@ -27,7 +27,7 @@ class Args:
     path_face_db = Path('face_db')
 
     # msg
-    msg_face = "face detected"
+    msg_face = "face detected(press 'q' to shot)"
     msg_no_face = "No face detected"
     msg_ask_keep = "Wanna keep this face?(y/n)"
 
@@ -72,28 +72,23 @@ def main():
             break
 
         res = args.msg_no_face if len(tracked_objects) == 0 else args.msg_face
-        res += "(press 'q' to shot)"
         
         cv2.imshow(res, cv2_im)
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            if res == args.msg_face:
-                print(f'Capturing identity: {identity}')
+        if cv2.waitKey(1) & 0xFF == ord('q') & res == args.msg_face:
+            print(f'Capturing identity: {identity}')
+            cv2.destroyAllWindows()
+            cv2.imshow(args.msg_ask_keep, cv2_im)
+            if cv2.waitKey(0) & 0xFF == ord('y'):
+                path_identity = args.path_face_db / Path(identity)
+                mkdir(path_identity)
+                fname = get_legal_fname(path_identity, identity)
+                # save image
+                cv2.imwrite(str(fname), crop_bgr)
+                print(f"Face template built: {str(fname)}")
+                break
+            elif cv2.waitKey(0) & 0xFF == ord('n'):
+                print('Face template dropped')
                 cv2.destroyAllWindows()
-                cv2.imshow(args.msg_ask_keep, cv2_im)
-                if cv2.waitKey(0) & 0xFF == ord('y'):
-                    path_identity = args.path_face_db / Path(identity)
-                    mkdir(path_identity)
-                    fname = get_legal_fname(path_identity, identity)
-                    # save image
-                    cv2.imwrite(str(fname), crop_bgr)
-                    print(f"Face template built: {str(fname)}")
-                    break
-                elif cv2.waitKey(0) & 0xFF == ord('n'):
-                    print('Face template dropped')
-                    cv2.destroyAllWindows()
-            else:
-                print(res)
-            time.sleep(5)
         if res != prev_res: cv2.destroyAllWindows()
         prev_res = res
         
