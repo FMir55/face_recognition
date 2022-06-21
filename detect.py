@@ -84,7 +84,7 @@ def main():
         for tracked_object in tracked_objects:
             id = tracked_object.id
             ids.append(id)
-            id2cnt[id] = Counter()
+            if id not in id2cnt: id2cnt[id] = Counter()
             x0, y0, x1, y1 = tracked_object.last_detection.points.flatten()
             crop_bgr = cv2_im[y0:y1, x0:x1]
 
