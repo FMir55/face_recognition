@@ -1,12 +1,13 @@
 import cv2
 import numpy as np
 import pandas as pd
-from pycoral.adapters.common import output_tensor
+from pycoral.adapters.common import input_size, output_tensor
 from pycoral.adapters.detect import get_objects
 from pycoral.utils.edgetpu import run_inference
 
 
-def inference_detection(cv2_im, interpreter_detection, inference_size_detection, threshold):
+def inference_detection(cv2_im, interpreter_detection, threshold):
+    inference_size_detection = input_size(interpreter_detection)
     cv2_im_rgb = cv2.cvtColor(cv2_im, cv2.COLOR_BGR2RGB)
     cv2_im_rgb = cv2.resize(cv2_im_rgb, inference_size_detection)
     run_inference(interpreter_detection, cv2_im_rgb.tobytes())
@@ -28,7 +29,8 @@ def prewhiten(x):
     y = (x - mean) / std_adj
     return y
 
-def inference_embedding(cv2_im, interpreter_emb, inference_size_emb):
+def inference_embedding(cv2_im, interpreter_emb):
+    inference_size_emb = input_size(interpreter_emb)
     cv2_im_rgb = cv2.cvtColor(cv2_im, cv2.COLOR_BGR2RGB)
     cv2_im_rgb = cv2.resize(cv2_im_rgb, inference_size_emb)
     # cv2_im_rgb = prewhiten(cv2_im_rgb)
@@ -36,14 +38,14 @@ def inference_embedding(cv2_im, interpreter_emb, inference_size_emb):
     print(output_tensor(interpreter_emb, -1)[0])
     return output_tensor(interpreter_emb, -1)[0]
 
-def get_embeddings_v2(suspects, interpreter_emb, inference_size_emb, distance_metric="cosine"):
+def get_embeddings_v2(suspects, interpreter_emb, distance_metric="cosine"):
     embeddings = []
     for suspect in suspects:
         img = cv2.imread(suspect)
         embeddings.append(
             (
                 suspect,
-                inference_embedding(img, interpreter_emb, inference_size_emb)
+                inference_embedding(img, interpreter_emb)
             )
         )
     df = pd.DataFrame(embeddings, columns = ['suspect', 'embedding_template'])

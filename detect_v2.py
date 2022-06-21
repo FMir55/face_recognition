@@ -1,7 +1,6 @@
 from collections import Counter
 
 import cv2
-from pycoral.adapters.common import input_size
 from pycoral.utils.edgetpu import make_interpreter
 
 from utils.apis import get_attr
@@ -21,15 +20,15 @@ def main():
     cap.set(3, 1920)
     cap.set(4, 1080)
 
+    '''
     # face detection
     interpreter_detection = make_interpreter(args.model_detection)
     interpreter_detection.allocate_tensors()
-    inference_size_detection = input_size(interpreter_detection)
+    '''
 
     # face embedding
     interpreter_emb = make_interpreter(args.model_emb)
     interpreter_emb.allocate_tensors()
-    inference_size_emb = input_size(interpreter_emb)
 
     # tracker
     tracker = get_tracker(args.initialization_delay, args.max_distance_between_points)
@@ -52,7 +51,7 @@ def main():
         ret, cv2_im = cap.read()
         if not ret: break
 
-        objs = inference_detection(cv2_im, interpreter_detection, inference_size_detection, args.threshold)
+        objs = inference_detection(cv2_im, interpreter_detection, args.threshold)
 
         height, width, _ = cv2_im.shape
         scale_x, scale_y = width / inference_size_detection[0], height / inference_size_detection[1]
