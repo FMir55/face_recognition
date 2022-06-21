@@ -61,7 +61,7 @@ def main():
     df = get_embeddings(suspects)
 
     id2info = {}
-    if df.shape[0] > 0: id2identity = {}
+    if not df or df.shape[0] > 0: id2identity = {}
     prev_res = args.msg_no_face
     face_names = []
     # process_this_frame = False
@@ -102,7 +102,7 @@ def main():
             cv2.putText(cv2_im, attr, (x0, y0+30), args.font, 1.0, (255, 0, 0), 2)
 
             # At least one template exists
-            if df.shape[0] > 0:
+            if not df or df.shape[0] > 0:
                 if id in id2identity:
                     suspect_name, best_similarity = id2identity[id]
                 else:
@@ -186,7 +186,7 @@ def main():
                 else:
                     face_names.append(f"Unknown{str(id)}")
 
-        res = '_'.join(face_names)
+        res = '_'.join(face_names) + "(Press 'q' to quit)"
         if res != prev_res: cv2.destroyAllWindows()
         cv2.imshow(res, cv2_im)
         if cv2.waitKey(1) & 0xFF == ord('q'):
