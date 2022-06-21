@@ -28,7 +28,7 @@ class Args:
     path_face_db = Path('face_db')
 
     # match face
-    similarity_thresh = 0.7
+    similarity_thresh = 70 # 0~100
     match_delay = 5
 
     # draw
