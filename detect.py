@@ -18,7 +18,8 @@ class Args:
     camera_idx = 2
 
     # face detection
-    model = 'all_models/mobilenet_ssd_v2_face_quant_postprocess_edgetpu.tflite'
+    # model = 'all_models/mobilenet_ssd_v2_face_quant_postprocess_edgetpu.tflite'
+    model = '../all_models/mobilenet_ssd_v2_face_quant_postprocess_edgetpu.tflite'
     threshold = 0.1
 
     # tracker

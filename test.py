@@ -4,7 +4,7 @@ from pycoral.utils.edgetpu import make_interpreter, run_inference
 
 
 class Args:
-    model = 'all_models/facenet.tflite'
+    model = '../all_models/facenet.tflite'
 
 args = Args()
 
