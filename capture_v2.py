@@ -7,30 +7,9 @@ from pycoral.adapters.common import input_size
 from pycoral.adapters.detect import get_objects
 from pycoral.utils.edgetpu import make_interpreter, run_inference
 
+from utils.config import Args
 from utils.preparation import get_legal_fname, mkdir, prune
 from utils.tracker import convert_detection, get_tracker
-
-
-class Args:
-    # camera device index
-    camera_idx = 2
-
-    # face detection
-    # model = 'all_models/mobilenet_ssd_v2_face_quant_postprocess_edgetpu.tflite'
-    model = '../all_models/mobilenet_ssd_v2_face_quant_postprocess_edgetpu.tflite'
-    threshold = 0.1
-
-    # tracker
-    max_distance_between_points = 200 
-    initialization_delay = 10
-
-    # capture
-    path_face_db = Path('face_db')
-
-    # msg
-    msg_face = "face detected(press 'q' to shot)"
-    msg_no_face = "No face detected"
-    msg_ask_keep = "Wanna keep this face?(y/n)"
 
 args = Args()
 
@@ -44,24 +23,24 @@ def main():
     cap.set(4, 1080)
 
     # face detection
-    interpreter_detection = make_interpreter(args.model)
+    interpreter_detection = make_interpreter(args.model_detection)
     interpreter_detection.allocate_tensors()
-    inference_size = input_size(interpreter_detection)
+    inference_size_detection = input_size(interpreter_detection)
 
     # tracker
     tracker = get_tracker(args.initialization_delay, args.max_distance_between_points)
-    prev_res = args.msg_no_face
+    prev_res = args.msg_no_face_cap
     while cap.isOpened():
         ret, cv2_im = cap.read()
         if not ret: break
 
         cv2_im_rgb = cv2.cvtColor(cv2_im, cv2.COLOR_BGR2RGB)
-        cv2_im_rgb = cv2.resize(cv2_im_rgb, inference_size)
+        cv2_im_rgb = cv2.resize(cv2_im_rgb, inference_size_detection)
         run_inference(interpreter_detection, cv2_im_rgb.tobytes())
         objs = get_objects(interpreter_detection, args.threshold)
 
         height, width, _ = cv2_im.shape
-        scale_x, scale_y = width / inference_size[0], height / inference_size[1]
+        scale_x, scale_y = width / inference_size_detection[0], height / inference_size_detection[1]
         detections = [convert_detection(obj, scale_x, scale_y) for obj in objs]
         tracked_objects = tracker.update(detections=detections)
         for tracked_object in tracked_objects:
@@ -73,7 +52,7 @@ def main():
             cv2_im = cv2.rectangle(cv2_im, (x0, y0), (x1, y1), (0, 255, 0), 2)
             break
 
-        res = args.msg_no_face if len(tracked_objects) == 0 else args.msg_face
+        res = args.msg_no_face_cap if len(tracked_objects) == 0 else args.msg_face
         if res != prev_res: cv2.destroyAllWindows()
         cv2.imshow(res, cv2_im)
         if cv2.waitKey(1) & 0xFF == ord('q') and res == args.msg_face:

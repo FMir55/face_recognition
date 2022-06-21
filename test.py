@@ -19,7 +19,7 @@ def main():
     cv2_im_rgb = cv2.resize(cv2_im_rgb, inference_size)
     '''
     import numpy as np
-    cv2_im_rgb = np.ones((160, 160, 3))
+    cv2_im_rgb = np.ones((2, 160, 160, 3))
     run_inference(interpreter, cv2_im_rgb.tobytes())
     embedding = output_tensor(interpreter, -1)
     print(embedding)

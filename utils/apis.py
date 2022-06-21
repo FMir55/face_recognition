@@ -42,9 +42,9 @@ def get_embeddings(suspects, distance_metric="cosine"):
                 get_embedding(img)
             )
         )
-        df = pd.DataFrame(embeddings, columns = ['suspect', 'embedding_template'])
-        df['distance_metric'] = distance_metric
-        return df
+    df = pd.DataFrame(embeddings, columns = ['suspect', 'embedding_template'])
+    df['distance_metric'] = distance_metric
+    return df
 
 def get_attr(id2info, crop_bgr):
     if id in id2info: 
