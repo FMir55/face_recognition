@@ -71,7 +71,7 @@ def main():
             break
 
         res = args.msg_no_face if len(tracked_objects) == 0 else args.msg_face
-        cv2.imshow(res, cv2_im)
+        cv2.imshow('frame', cv2_im)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             if res == args.msg_face:
                 print(f'Capturing identity: {identity}')
