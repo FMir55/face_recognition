@@ -37,7 +37,7 @@ def main():
     suspects = get_suspects(args.path_face_db)
 
     # get face embeddings
-    df = get_embeddings_v2(suspects, interpreter_emb, inference_size_emb)
+    df = get_embeddings_v2(suspects, interpreter_emb)
     print(df.to_dict())
     return 0
 
