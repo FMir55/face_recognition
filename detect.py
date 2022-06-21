@@ -59,7 +59,9 @@ def main():
 
     id2info = {}
     id2identity = {}
+    # process_this_frame = False
     while cap.isOpened():
+        # process_this_frame = ~process_this_frame
         ret, cv2_im = cap.read()
         if not ret: break
         resolution_y, resolution_x = cv2_im.shape[:2]
@@ -77,9 +79,9 @@ def main():
             id = tracked_object.id
             x0, y0, x1, y1 = tracked_object.last_detection.points.flatten()
             crop_bgr = cv2_im[y0:y1, x0:x1]
+
             if id in id2info: 
                 emotion, age, gender = id2info[id].values()
-
             else:
                 face_info = get_face_info(crop_bgr)
                 emotion, age, gender = face_info.values()
@@ -91,30 +93,31 @@ def main():
                 }
 
             if id in id2identity:
-                suspect_name, best_simlarity = id2identity[id]
+                suspect_name, best_similarity = id2identity[id]
             else:
                 df['embedding_sample'] = [get_embedding(crop_bgr)] * len(df)
                 df['distance'] = df.apply(findDistance, axis = 1)
                 candidate = df.sort_values(by = ["distance"]).iloc[0]
                 suspect_name = candidate['suspect']
                 best_distance = candidate['distance']
-                best_simlarity = int((1 - best_distance)* 100)
+                best_similarity = int((1 - best_distance)* 100)
 
-            if best_simlarity >= args.similarity_thresh:
+            if best_similarity >= args.similarity_thresh:
+                id2identity[id] = (suspect_name, best_similarity)
+
                 display_img = cv2.imread(suspect_name)
                 display_img = cv2.resize(display_img, (args.pivot_img_size, args.pivot_img_size))
-                display_img_rgb = cv2.cvtColor(display_img, cv2.COLOR_BGR2RGB)
 
                 # collect results
                 label = suspect_name.split("/")[-1].replace(".jpg", "")
-                label = re.sub('[0-9]', '', label) + f"_{best_simlarity}%"
+                label = re.sub('[0-9]', '', label) + f"_{best_similarity}%"
 
                 # draw
                 try:
                     w = x1-x0
                     if y0 - args.pivot_img_size > 0 and x1 + args.pivot_img_size < resolution_x:
                         #top right
-                        cv2_im[y0 - args.pivot_img_size:y0, x1:x1+args.pivot_img_size, :3] = display_img_rgb
+                        cv2_im[y0 - args.pivot_img_size:y0, x1:x1+args.pivot_img_size, :3] = display_img
 
                         overlay = cv2_im.copy(); opacity = 0.4
                         cv2.rectangle(cv2_im,(x1,y0),(x1+args.pivot_img_size, y0+20),(46,200,255),cv2.FILLED)
@@ -127,7 +130,7 @@ def main():
 
                     elif y1 + args.pivot_img_size < resolution_y and x0 - args.pivot_img_size > 0:
                         #bottom left
-                        cv2_im[y1:y1+args.pivot_img_size, x0-args.pivot_img_size:x0, :3] = display_img_rgb
+                        cv2_im[y1:y1+args.pivot_img_size, x0-args.pivot_img_size:x0, :3] = display_img
 
                         overlay = cv2_im.copy(); opacity = 0.4
                         cv2.rectangle(cv2_im,(x0-args.pivot_img_size,y1-20),(x0, y1),(46,200,255),cv2.FILLED)
@@ -141,7 +144,7 @@ def main():
 
                     elif y0 - args.pivot_img_size > 0 and x0 - args.pivot_img_size > 0:
                         #top left
-                        cv2_im[y0-args.pivot_img_size:y0, x0-args.pivot_img_size:x0, :3] = display_img_rgb
+                        cv2_im[y0-args.pivot_img_size:y0, x0-args.pivot_img_size:x0, :3] = display_img
 
                         overlay = cv2_im.copy(); opacity = 0.4
                         cv2.rectangle(cv2_im,(x0 - args.pivot_img_size,y0),(x0, y0+20),(46,200,255),cv2.FILLED)
@@ -155,7 +158,7 @@ def main():
 
                     elif x1+args.pivot_img_size < resolution_x and y1 + args.pivot_img_size < resolution_y:
                         #bottom right
-                        cv2_im[y1:y1+args.pivot_img_size, x1:x1+args.pivot_img_size, :3] = display_img_rgb
+                        cv2_im[y1:y1+args.pivot_img_size, x1:x1+args.pivot_img_size, :3] = display_img
 
                         overlay = cv2_im.copy(); opacity = 0.4
                         cv2.rectangle(cv2_im,(x1,y1-20),(x1+args.pivot_img_size, y1),(46,200,255),cv2.FILLED)
@@ -168,6 +171,9 @@ def main():
                         cv2.line(cv2_im, (x0+int(w/2)+int(w/4), y1+int(args.pivot_img_size/2)), (x1, y1+int(args.pivot_img_size/2)), (67,67,67),1)
                 except Exception as err:
                     print(str(err))
+            else:
+                # Unknown
+                pass
             
             # draw
             attr = f"{gender}, {age}y, {emotion}"
