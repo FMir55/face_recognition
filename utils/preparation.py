@@ -32,12 +32,14 @@ def get_suspects(path):
 
 def prune(x0, y0, x1, y1):
   x_mid = np.mean([x0, x1])
+  y_mid = np.mean([y0, y1])
   h = y1 - y0
   w = h * 0.65
+  h *= 0.7
 
   return (
     max(int(x_mid - w/2), x0),
-    y0, 
+    max(int(y_mid - h/2), y0),
     min(int(x_mid + w/2), x1),
-    y1
+    min(int(y_mid + h/2), y1)
   )
