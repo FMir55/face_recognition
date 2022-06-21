@@ -1,11 +1,23 @@
 import os
+import shutil
+from pathlib import Path
 
+
+def mkdir(path):
+  if not path.is_dir():
+    path.mkdir()
+
+def get_legal_fname(path_identity, identity):
+  for idx in range(len(os.listdir(str(path_identity)))+1):
+    fname = path_identity / Path(identity + f"{str(idx)}.jpg")
+    if not fname.exists():
+      return fname
 
 def get_suspects(path):
   suspects = []
   #check passed db folder exists
-  if os.path.isdir(path) == True:
-    for r, d, f in os.walk(path): # r=root, d=directories, f = files
+  if path.isdir():
+    for r, d, f in os.walk(str(path)): # r=root, d=directories, f = files
       for file in f:
         if ('.jpg' in file):
           #exact_path = os.path.join(r, file)
