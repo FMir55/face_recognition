@@ -433,5 +433,4 @@ def convert_detection(obj, scale_x, scale_y):
             [int(bbox.xmax), int(bbox.ymax)]
         ]
     )
-    score = obj.score
-    return Detection(points=bbox_out, scores=score)
+    return Detection(points=bbox_out)
