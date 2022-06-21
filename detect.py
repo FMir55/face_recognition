@@ -1,4 +1,4 @@
-import re
+from collections import Counter
 from pathlib import Path
 
 import cv2
@@ -8,7 +8,7 @@ from pycoral.utils.edgetpu import make_interpreter, run_inference
 
 from utils.apis import get_embedding, get_embeddings, get_face_info
 from utils.preparation import get_suspects
-from utils.similarity import findDistance
+from utils.similarity import findDistance, get_label
 from utils.tracker import convert_detection, get_tracker
 
 
@@ -28,7 +28,8 @@ class Args:
     path_face_db = Path('face_db')
 
     # match face
-    similarity_thresh = 0.1
+    similarity_thresh = 0.7
+    match_delay = 10
 
     # draw
     font = cv2.FONT_HERSHEY_SIMPLEX
@@ -62,11 +63,10 @@ def main():
 
     id2info = {}
     if df is not None and df.shape[0] > 0: id2identity = {}
+    id2cnt = {}
     prev_res = args.msg_no_face
-    # process_this_frame = False
     while cap.isOpened():
         face_names = []
-        # process_this_frame = ~process_this_frame
         ret, cv2_im = cap.read()
         if not ret: break
         resolution_y, resolution_x = cv2_im.shape[:2]
@@ -80,8 +80,11 @@ def main():
         scale_x, scale_y = width / inference_size[0], height / inference_size[1]
         detections = [convert_detection(obj, scale_x, scale_y) for obj in objs]
         tracked_objects = tracker.update(detections=detections)
+        ids = []
         for tracked_object in tracked_objects:
             id = tracked_object.id
+            ids.append(id)
+            id2cnt[id] = Counter()
             x0, y0, x1, y1 = tracked_object.last_detection.points.flatten()
             crop_bgr = cv2_im[y0:y1, x0:x1]
 
@@ -90,7 +93,6 @@ def main():
             else:
                 face_info = get_face_info(crop_bgr)
                 emotion, age, gender = face_info.values()
-                
                 id2info[id] = {
                     "emotion" : emotion, 
                     "age" : age, 
@@ -105,24 +107,13 @@ def main():
             if df is not None and df.shape[0] > 0:
                 if id in id2identity:
                     suspect_name, best_similarity = id2identity[id]
-                else:
-                    df['embedding_sample'] = [get_embedding(crop_bgr)] * len(df)
-                    df['distance'] = df.apply(findDistance, axis = 1)
-                    candidate = df.sort_values(by = ["distance"]).iloc[0]
-                    suspect_name = candidate['suspect']
-                    best_distance = candidate['distance']
-                    best_similarity = int((1 - best_distance)* 100)
-
-                if best_similarity >= args.similarity_thresh:
-                    id2identity[id] = (suspect_name, best_similarity)
 
                     display_img = cv2.imread(suspect_name)
                     display_img = cv2.resize(display_img, (args.pivot_img_size, args.pivot_img_size))
 
-                    # collect results
-                    label = suspect_name.split("/")[-1].replace(".jpg", "")
-                    label = re.sub('[0-9]', '', label) + f"_{best_similarity}%"
+                    label = get_label(suspect_name)
                     face_names.append(label)
+                    label += f"_{best_similarity}%"
 
                     # draw
                     try:
@@ -183,8 +174,25 @@ def main():
                             cv2.line(cv2_im, (x0+int(w/2)+int(w/4), y1+int(args.pivot_img_size/2)), (x1, y1+int(args.pivot_img_size/2)), (67,67,67),1)
                     except Exception as err:
                         print(str(err))
+
                 else:
-                    face_names.append(f"Unknown{str(id)}")
+                    df['embedding_sample'] = [get_embedding(crop_bgr)] * len(df)
+                    df['distance'] = df.apply(findDistance, axis = 1)
+                    candidate = df.sort_values(by = ["distance"]).iloc[0]
+                    suspect_name = candidate['suspect']
+                    best_distance = candidate['distance']
+                    best_similarity = int((1 - best_distance)* 100)
+
+                    label = get_label(suspect_name) if best_similarity >= args.similarity_thresh else 'Unknown'
+                    id2cnt[id][label] += 1
+                        
+                    if id2cnt[id][label] >= args.match_delay:
+                        id2identity[id] = (suspect_name, best_similarity)
+                        del id2cnt[id]
+        
+        for id in id2cnt: 
+            if id not in ids:
+                del id2identity[id]
 
         res = '_'.join(face_names) + "(Press 'q' to quit)"
         if res != prev_res: cv2.destroyAllWindows()

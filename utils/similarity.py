@@ -1,3 +1,5 @@
+import re
+
 import numpy as np
 
 
@@ -36,3 +38,7 @@ def findDistance(row):
     distance = findEuclideanDistance(l2_normalize(img1_representation), l2_normalize(img2_representation))
 
   return distance
+
+def get_label(suspect_name):
+  label = suspect_name.split("/")[-1].replace(".jpg", "")
+  return re.sub('[0-9]', '', label)
