@@ -91,13 +91,16 @@ def main():
             if id in id2info: 
                 emotion, age, gender = id2info[id].values()
             else:
-                face_info = get_face_info(crop_bgr)
-                emotion, age, gender = face_info.values()
-                id2info[id] = {
-                    "emotion" : emotion, 
-                    "age" : age, 
-                    "gender" : gender
-                }
+                try:
+                    face_info = get_face_info(crop_bgr)
+                    emotion, age, gender = face_info.values()
+                    id2info[id] = {
+                        "emotion" : emotion, 
+                        "age" : age, 
+                        "gender" : gender
+                    }
+                except:
+                    emotion, age, gender = '', '', ''
             # draw
             attr = f"{gender}, {age}y, {emotion}"
             cv2.rectangle(cv2_im, (x0, y0), (x1, y1), (0, 255, 0), 2)
@@ -191,6 +194,9 @@ def main():
                                             label,
                                             best_similarity)
                         del id2cnt[id]
+
+            # 高乘載管制:1
+            break
         
         for id in list(id2identity.keys()): 
             if id not in ids:
