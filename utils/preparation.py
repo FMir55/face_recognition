@@ -39,7 +39,7 @@ def prune(x0, y0, x1, y1):
 
   return (
     max(int(x_mid - w/2), x0),
-    max(int(y_mid - h*1/3), y0),
+    max(int(y_mid - h/2), y0),
     min(int(x_mid + w/2), x1),
-    min(int(y_mid + h*2/3), y1)
+    min(int(y_mid + h/2), y1)
   )
