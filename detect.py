@@ -192,7 +192,8 @@ def main():
                                             best_similarity)
                         del id2cnt[id]
         
-        for id in id2identity: 
+        ks = id2identity.keys()
+        for id in ks: 
             if id not in ids:
                 del id2identity[id]
 
