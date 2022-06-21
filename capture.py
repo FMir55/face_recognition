@@ -75,7 +75,7 @@ def main():
         if cv2.waitKey(1) & 0xFF == ord('q'):
             if res == args.msg_face:
                 print(f'Capturing identity: {identity}')
-                response = input('Wanna keep this face?(y/n)')
+                response = input('Wanna keep this face?(y/n)\n')
                 if response == 'y':
                     path_identity = args.path_face_db / Path(identity)
                     mkdir(path_identity)
@@ -86,7 +86,6 @@ def main():
                     break
                 else:
                     print('Face template dropped')
-                break
             else:
                 print(res)
             time.sleep(5)
