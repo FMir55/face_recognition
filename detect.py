@@ -129,6 +129,8 @@ def main():
                                 del id2cnt[id]
                         except Exception as err:
                             print(str(err))
+                    
+                    clean_counter(id2identity, ids)
 
                 # draw
                 cv2.putText(cv2_im, attr, (x0, y0+30), args.font, 1.0, (255, 0, 0), 2)
@@ -136,7 +138,6 @@ def main():
             # 高乘載管制:1
             break
         
-        clean_counter(id2identity, ids)
         clean_counter(id2warmup, ids)
 
         res = '_'.join(face_names) + "(Press 'q' to quit)"
