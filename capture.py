@@ -71,7 +71,8 @@ def main():
             break
 
         res = args.msg_no_face if len(tracked_objects) == 0 else args.msg_face
-        cv2.imshow('frame', cv2_im)
+        
+        cv2.imshow(res, cv2_im)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             if res == args.msg_face:
                 print(f'Capturing identity: {identity}')
@@ -83,13 +84,16 @@ def main():
                     # save image
                     cv2.imwrite(str(fname), crop_bgr)
                     print(f"Face template built: {str(fname)}")
+                    break
                 else:
                     print('Face template dropped')
-                break
+                    cv2.destroyAllWindows()
             else:
                 print(res)
             time.sleep(5)
-
+        if res != prev_res: cv2.destroyAllWindows()
+        prev_res = res
+        
     cap.release()
     cv2.destroyAllWindows()
 
