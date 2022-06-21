@@ -33,7 +33,7 @@ class Args:
 args = Args()
 
 def main():
-    identity = input('Who are you...?')
+    identity = input('Who are you...?\n')
     mkdir(args.path_face_db)
 
     # camera
@@ -70,7 +70,7 @@ def main():
             cv2_im = cv2.rectangle(cv2_im, (x0, y0), (x1, y1), (0, 255, 0), 2)
             break
 
-        res = args.msg_no_face if len(tracked_objects) == 0 else msg_face
+        res = args.msg_no_face if len(tracked_objects) == 0 else args.msg_face
         cv2.imshow(res, cv2_im)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             if res == args.msg_face:
