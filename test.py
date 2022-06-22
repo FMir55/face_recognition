@@ -37,7 +37,7 @@ def main():
     cv2_im_rgb = cv2.resize(cv2_im_rgb, inference_size)
     aligned_images =  prewhiten(cv2_im_rgb[np.newaxis]).astype(np.float32)
     run_inference(interpreter, aligned_images.tobytes())
-    embedding1 = output_tensor(interpreter, 0)[0]
+    embedding1 = output_tensor(interpreter, 0)[0].copy()
     print(embedding1)
 
     cv2_im = cv2.imread('face_db/a/a1.jpg')
@@ -45,7 +45,7 @@ def main():
     cv2_im_rgb = cv2.resize(cv2_im_rgb, inference_size)
     aligned_images =  prewhiten(cv2_im_rgb[np.newaxis]).astype(np.float32)
     run_inference(interpreter, aligned_images.tobytes())
-    embedding2 = output_tensor(interpreter, 0)[0]
+    embedding2 = output_tensor(interpreter, 0)[0].copy()
     print(embedding2)
     
     print(distance.cosine(embedding1, embedding2))
