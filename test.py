@@ -2,7 +2,6 @@ import cv2
 import numpy as np
 from pycoral.adapters.common import input_size, output_tensor
 from pycoral.utils.edgetpu import make_interpreter, run_inference
-from scipy.spatial import distance
 
 
 class Args:

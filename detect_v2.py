@@ -10,7 +10,7 @@ from utils.draw import draw_identity
 from utils.inference import (get_embeddings_v2, inference_detection,
                              inference_embedding)
 from utils.preparation import clean_counter, get_suspects, prune
-from utils.similarity import findDistance, get_label
+from utils.similarity import calc_dist, get_label
 from utils.tracker import convert_detection, get_tracker
 
 args = Args()
@@ -89,7 +89,7 @@ def main():
                     else:
                         try:
                             df['embedding_sample'] = [inference_embedding(crop_bgr, interpreter_emb)] * len(df)
-                            df['distance'] = df.apply(findDistance, axis = 1)
+                            df['distance'] = df.apply(calc_dist, axis = 1)
                             candidate = df.sort_values(by = ["distance"]).iloc[0]
                             suspect_name = candidate['suspect']
                             best_distance = candidate['distance']

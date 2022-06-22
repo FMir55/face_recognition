@@ -37,7 +37,7 @@ def inference_embedding(cv2_im, interpreter_emb):
     run_inference(interpreter_emb, aligned_images.tobytes())
     return output_tensor(interpreter_emb, -1)[0]
 
-def get_embeddings_v2(suspects, interpreter_emb, distance_metric="cosine"):
+def get_embeddings_v2(suspects, interpreter_emb):
     embeddings = []
     for suspect in suspects:
         img = cv2.imread(suspect)
@@ -48,5 +48,4 @@ def get_embeddings_v2(suspects, interpreter_emb, distance_metric="cosine"):
             )
         )
     df = pd.DataFrame(embeddings, columns = ['suspect', 'embedding_template'])
-    df['distance_metric'] = distance_metric
     return df
