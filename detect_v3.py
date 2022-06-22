@@ -72,6 +72,7 @@ def main():
             if id2warmup[id] >= args.warmup_delay:
                 # attribute
                 attr = get_attr(id, id2info, crop_bgr)
+                color = (255, 0, 0) if attr.split(',')[0] == 'Male' else (0, 0, 255)
 
                 # identity
                 if do_identity(df):
@@ -124,10 +125,10 @@ def main():
                 # run bpm
                 if id in id2bpm:
                     text_bpm = id2bpm[id].run(crop_bgr)
-                    cv2.putText(cv2_im, text_bpm, (x0, y1+60), args.font, 1.0, (255, 0, 0), 2)
+                    cv2.putText(cv2_im, text_bpm, (x0, y1+60), args.font, 1.0, color, 2)
    
                 # draw
-                cv2.putText(cv2_im, attr, (x0, y1+30), args.font, 1.0, (255, 0, 0), 2)
+                cv2.putText(cv2_im, attr, (x0, y1+30), args.font, 1.0, color, 2)
 
             # 高乘載管制:1
             break

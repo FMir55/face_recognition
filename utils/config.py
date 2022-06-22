@@ -17,7 +17,7 @@ class Args:
     model_emb = '../all_models/facenet.tflite'
 
     # tracker
-    max_distance_between_points = 200 
+    max_distance_between_points = 250 
     initialization_delay = 10
 
     # capture
