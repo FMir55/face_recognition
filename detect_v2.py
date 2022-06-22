@@ -1,6 +1,9 @@
+import warnings
 from collections import Counter
 
 import cv2
+
+warnings.simplefilter("ignore")
 from pycoral.adapters.common import input_size
 from pycoral.utils.edgetpu import make_interpreter
 
