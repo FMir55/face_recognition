@@ -1,6 +1,7 @@
 from collections import Counter
 
 import cv2
+from pycoral.adapters.common import input_size
 from pycoral.utils.edgetpu import make_interpreter
 
 from utils.apis import get_attr
@@ -23,6 +24,7 @@ def main():
     # face detection
     interpreter_detection = make_interpreter(args.model_detection)
     interpreter_detection.allocate_tensors()
+    inference_size_detection = input_size(interpreter_detection)
 
     # face embedding
     interpreter_emb = make_interpreter(args.model_emb)
@@ -36,8 +38,6 @@ def main():
 
     # get face embeddings
     df = get_embeddings_v2(suspects, interpreter_emb)
-    print(df.to_dict())
-    return 0
 
     id2info = {}
     if df is not None and df.shape[0] > 0: id2identity = {}
@@ -88,7 +88,7 @@ def main():
                     # Not yet
                     else:
                         try:
-                            df['embedding_sample'] = [inference_embedding(crop_bgr, interpreter_emb, inference_size_emb)] * len(df)
+                            df['embedding_sample'] = [inference_embedding(crop_bgr, interpreter_emb)] * len(df)
                             df['distance'] = df.apply(findDistance, axis = 1)
                             candidate = df.sort_values(by = ["distance"]).iloc[0]
                             suspect_name = candidate['suspect']
