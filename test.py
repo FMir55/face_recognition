@@ -3,6 +3,8 @@ import numpy as np
 from pycoral.adapters.common import input_size, output_tensor
 from pycoral.utils.edgetpu import make_interpreter, run_inference
 
+from utils.similarity import calc_dist
+
 
 class Args:
     model = '../all_models/facenet.tflite'
@@ -36,7 +38,7 @@ def main():
     cv2_im_rgb = cv2.resize(cv2_im_rgb, inference_size)
     aligned_images =  prewhiten(cv2_im_rgb[np.newaxis]).astype(np.float32)
     run_inference(interpreter, aligned_images.tobytes())
-    embedding1 = output_tensor(interpreter, 0)
+    embedding1 = output_tensor(interpreter, 0)[0]
     print(embedding1)
 
     cv2_im = cv2.imread('face_db/a/a1.jpg')
@@ -44,10 +46,10 @@ def main():
     cv2_im_rgb = cv2.resize(cv2_im_rgb, inference_size)
     aligned_images =  prewhiten(cv2_im_rgb[np.newaxis]).astype(np.float32)
     run_inference(interpreter, aligned_images.tobytes())
-    embedding2 = output_tensor(interpreter, 0)
+    embedding2 = output_tensor(interpreter, 0)[0]
     print(embedding2)
-
-    print(embedding1 == embedding2)
+    
+    print(calc_dist(embedding1, embedding2))
 
 
 if __name__ == '__main__':
