@@ -35,7 +35,7 @@ def inference_embedding(cv2_im, interpreter_emb):
     cv2_im_rgb = cv2.resize(cv2_im_rgb, inference_size_emb)
     aligned_images = prewhiten(cv2_im_rgb[np.newaxis]).astype(np.float32)
     run_inference(interpreter_emb, aligned_images.tobytes())
-    return output_tensor(interpreter_emb, -1)[0]
+    return output_tensor(interpreter_emb, 0)[0]
 
 def get_embeddings_v2(suspects, interpreter_emb):
     embeddings = []
