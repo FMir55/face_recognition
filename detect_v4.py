@@ -131,7 +131,7 @@ def main():
 
                     # data display
                     plot = make_bpm_plot(id2bpm[id], crop_bgr)
-                    if plot:
+                    if plot is not None:
                         cv2.imshow(plot_title, plot)
                 else:
                     cv2.destroyWindow(plot_title)
