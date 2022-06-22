@@ -21,7 +21,8 @@ class Args:
     initialization_delay = 10
 
     # capture
-    path_face_db = Path('face_db')
+    # path_face_db = Path('face_db')
+    path_face_db = Path('../face_db')
 
     # match face
     similarity_thresh = 73 # 0~100

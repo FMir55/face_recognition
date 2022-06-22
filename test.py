@@ -32,7 +32,7 @@ def main():
     # 160 160
     inference_size = input_size(interpreter)
 
-    cv2_im = cv2.imread('face_db/a/a0.jpg')
+    cv2_im = cv2.imread('../face_db/a/a0.jpg')
     cv2_im_rgb = cv2.cvtColor(cv2_im, cv2.COLOR_BGR2RGB)
     cv2_im_rgb = cv2.resize(cv2_im_rgb, inference_size)
     aligned_images =  prewhiten(cv2_im_rgb[np.newaxis]).astype(np.float32)
@@ -40,7 +40,7 @@ def main():
     embedding1 = output_tensor(interpreter, 0)[0].copy()
     print(embedding1)
 
-    cv2_im = cv2.imread('face_db/a/a1.jpg')
+    cv2_im = cv2.imread('../face_db/a/a1.jpg')
     cv2_im_rgb = cv2.cvtColor(cv2_im, cv2.COLOR_BGR2RGB)
     cv2_im_rgb = cv2.resize(cv2_im_rgb, inference_size)
     aligned_images =  prewhiten(cv2_im_rgb[np.newaxis]).astype(np.float32)
