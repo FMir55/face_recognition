@@ -7,7 +7,7 @@ from pycoral.utils.edgetpu import make_interpreter
 from utils.apis import get_attr
 from utils.bpm import get_pulse
 from utils.config import Args
-from utils.draw import draw_identity
+from utils.draw import draw_identity, make_bpm_plot
 from utils.inference import (get_embeddings_v2, inference_detection,
                              inference_embedding)
 from utils.preparation import clean_counter, do_identity, get_suspects, prune
@@ -123,9 +123,17 @@ def main():
                         id2bpm[id] = get_pulse(args.bpm_limits)
 
                 # run bpm
+                name = label if do_identity(df) else "Data display"
+                plot_title = f"{name} - raw signal (top) and PSD (bottom)"
                 if id in id2bpm:
                     text_bpm = id2bpm[id].run(crop_bgr)
                     cv2.putText(cv2_im, text_bpm, (x0, y1+60), args.font, 1.0, color, 2)
+
+                    # data display
+                    plot = make_bpm_plot(id2bpm[id], crop_bgr)
+                    cv2.imshow(plot_title, plot)
+                else:
+                    cv2.destroyWindow(plot_title)
 
                 # draw
                 cv2.putText(cv2_im, attr, (x0, y1+30), args.font, 1.0, color, 2)
@@ -135,6 +143,7 @@ def main():
         
         clean_counter(id2warmup, ids)
         if do_identity(df): clean_counter(id2identity, ids)
+        clean_counter(id2bpm, ids)
 
         res = ("No identity detected" if len(face_names)==0 else '_'.join(face_names)) + "(Press 'q' to quit)"
         if res != prev_res: cv2.destroyAllWindows()

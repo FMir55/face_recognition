@@ -11,6 +11,7 @@ class get_pulse(object):
         self.buffer_size = 250
         self.data_buffer = []
         self.times = []
+        self.samples = []
         self.freqs = []
         self.fft = []
         self.t0 = time.time()
@@ -48,6 +49,7 @@ class get_pulse(object):
             L = self.buffer_size
 
         processed = np.array(self.data_buffer)
+        self.samples = processed
         if L > 10:
             self.output_dim = processed.shape[0]
 
