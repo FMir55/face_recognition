@@ -13,7 +13,7 @@ def combine(left, right):
     shape[0] = h
     shape[1] = w
     
-    comb = np.zeros(tuple(shape),left.dtype)
+    comb = np.zeros(tuple(shape), left.dtype)
     
     # left will be on left, aligned top, with right on right
     comb[:left.shape[0],:left.shape[1]] = left
