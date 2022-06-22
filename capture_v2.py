@@ -54,7 +54,7 @@ def main():
         if res != prev_res: cv2.destroyAllWindows()
         cv2.imshow(res, cv2_im)
         if cv2.waitKey(1) & 0xFF == ord('q') and res == args.msg_face:
-            print(f'Capturing identity: {identity}')
+            print(f'Capturing identity...{identity}')
             cv2.destroyAllWindows()
             cv2.imshow(args.msg_ask_keep, cv2_im)
             if cv2.waitKey(0) & 0xFF == ord('y'):

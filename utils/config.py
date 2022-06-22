@@ -16,6 +16,11 @@ class Args:
     # model_emb = 'all_models/facenet.tflite'
     model_emb = '../all_models/facenet.tflite'
 
+    # face_attribute
+    model_gender = '../all_models/gender.tflite'
+    model_age = '../all_models/age.tflite'
+    model_emotion = '../all_models/emotion.tflite'
+
     # tracker
     max_distance_between_points = 250 
     initialization_delay = 10
@@ -38,7 +43,7 @@ class Args:
     msg_no_face = "No face detected(press 'q' to quit)"
 
     # msg
-    msg_face = "face detected(press 'q' to shot)"
+    msg_face = "face detected(press 'q' to shoot)"
     msg_no_face_cap = "No face detected"
     msg_ask_keep = "Wanna keep this face?(y/n)"
 
