@@ -39,7 +39,7 @@ def main():
     run_inference(interpreter, aligned_images.tobytes())
     for i in range(100):
         embedding = output_tensor(interpreter, i)
-        print(i, embedding)
+        print(i)
 
 
 if __name__ == '__main__':
