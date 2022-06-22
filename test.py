@@ -37,9 +37,9 @@ def main():
     aligned_images =  prewhiten(cv2_im_rgb[np.newaxis])
 
     run_inference(interpreter, aligned_images.tobytes())
-    for i in range(100):
+    for i in range(1, 100):
         embedding = output_tensor(interpreter, i)
-        print(i)
+        print(i, np.array(embedding).shape)
 
 
 if __name__ == '__main__':
