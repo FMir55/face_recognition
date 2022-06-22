@@ -97,7 +97,7 @@ def main():
 
                             label = get_label(suspect_name) if best_similarity >= args.similarity_thresh else 'Unknown'
                             id2cnt[id][label] += 1
-                            print(id, label, best_similarity, id2cnt[id].most_common())
+                            print(id, label, best_distance, best_similarity, id2cnt[id].most_common())
                             if id2cnt[id][label] >= args.match_delay:
                                 id2identity[id] = (suspect_name if label != 'Unknown' else None, 
                                                     label,
