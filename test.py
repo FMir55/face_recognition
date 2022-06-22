@@ -2,8 +2,7 @@ import cv2
 import numpy as np
 from pycoral.adapters.common import input_size, output_tensor
 from pycoral.utils.edgetpu import make_interpreter, run_inference
-
-from utils.similarity import calc_dist
+from scipy.spatial import distance
 
 
 class Args:
@@ -49,7 +48,7 @@ def main():
     embedding2 = output_tensor(interpreter, 0)[0]
     print(embedding2)
     
-    print(calc_dist(embedding1, embedding2))
+    print(distance.cosine(embedding1, embedding2))
 
 
 if __name__ == '__main__':

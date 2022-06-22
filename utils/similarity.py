@@ -8,7 +8,6 @@ def calc_dist(row):
   emb1 = row['embedding_sample']
   emb2 = row['embedding_template']
   # cosine dist 0~1
-  print(emb1 == emb2)
   return distance.cosine(emb1, emb2)
 
 
