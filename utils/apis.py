@@ -46,7 +46,7 @@ def get_embeddings(suspects, distance_metric="cosine"):
     df['distance_metric'] = distance_metric
     return df
 
-def get_attr(id2info, crop_bgr):
+def get_attr(id, id2info, crop_bgr):
     if id in id2info: 
         emotion, age, gender = id2info[id].values()
     else:

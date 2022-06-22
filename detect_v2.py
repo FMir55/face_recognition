@@ -68,7 +68,7 @@ def main():
             cv2.rectangle(cv2_im, (x0, y0), (x1, y1), (0, 255, 0), 2)
 
             if id2warmup[id] >= args.warmup_delay:
-                attr = get_attr(id2info, crop_bgr)
+                attr = get_attr(id, id2info, crop_bgr)
 
                 # At least one template exists
                 if df is not None and df.shape[0] > 0:
