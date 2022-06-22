@@ -123,7 +123,7 @@ def main():
                         id2bpm[id] = get_pulse(args.bpm_limits)
 
                 # run bpm
-                name = label if do_identity(df) else "Data display"
+                name = label.split('_')[0] if do_identity(df) else "Data display"
                 plot_title = f"{name} - raw signal (top) and PSD (bottom)"
                 if id in id2bpm:
                     text_bpm = id2bpm[id].run(crop_bgr)
