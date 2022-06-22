@@ -36,13 +36,10 @@ def main():
     cv2_im_rgb = cv2.resize(cv2_im_rgb, inference_size)
     aligned_images =  prewhiten(cv2_im_rgb[np.newaxis])
 
-    '''
-    import numpy as np
-    cv2_im_rgb = np.ones((160, 160, 3)) * 125
-    '''
     run_inference(interpreter, aligned_images.tobytes())
-    embedding = output_tensor(interpreter, -1)
-    print(embedding)
+    for i in range(100):
+        embedding = output_tensor(interpreter, i)
+        print(i, embedding)
 
 
 if __name__ == '__main__':
