@@ -34,12 +34,10 @@ def main():
     cv2_im = cv2.imread('face_db/a/a0.jpg')
     cv2_im_rgb = cv2.cvtColor(cv2_im, cv2.COLOR_BGR2RGB)
     cv2_im_rgb = cv2.resize(cv2_im_rgb, inference_size)
-    aligned_images =  prewhiten(cv2_im_rgb[np.newaxis])
-
+    aligned_images =  prewhiten(cv2_im_rgb[np.newaxis]).astype(np.float32)
     run_inference(interpreter, aligned_images.tobytes())
-    for i in range(1, 100):
-        embedding = output_tensor(interpreter, i)
-        print(i, np.array(embedding).shape)
+    embedding = output_tensor(interpreter, 0)
+    print(embedding)
 
 
 if __name__ == '__main__':
