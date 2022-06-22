@@ -1,8 +1,6 @@
-import time
 from pathlib import Path
 
 import cv2
-import numpy as np
 from pycoral.adapters.common import input_size
 from pycoral.adapters.detect import get_objects
 from pycoral.utils.edgetpu import make_interpreter, run_inference

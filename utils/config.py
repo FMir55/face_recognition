@@ -41,3 +41,6 @@ class Args:
     msg_face = "face detected(press 'q' to shot)"
     msg_no_face_cap = "No face detected"
     msg_ask_keep = "Wanna keep this face?(y/n)"
+
+    # bpm
+    bpm_limits=[50, 160]

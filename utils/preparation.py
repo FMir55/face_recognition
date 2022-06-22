@@ -47,3 +47,7 @@ def clean_counter(cnt, ids):
   for id in list(cnt.keys()): 
     if id not in ids:
       del cnt[id]
+
+def do_identity(df):
+  # At least one template exists
+  return df is not None and df.shape[0] > 0

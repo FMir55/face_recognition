@@ -10,7 +10,13 @@ def calc_dist(row):
   # cosine dist 0~1
   return distance.cosine(emb1, emb2)
 
+def get_label(suspect_name):
+  label = suspect_name.split("/")[-1].replace(".jpg", "")
+  return re.sub('[0-9]', '', label)
 
+"""
+Legacy
+"""
 def l2_normalize(x):
     return x / np.sqrt(np.sum(np.multiply(x, x)))
 
@@ -46,7 +52,3 @@ def findDistance(row):
     distance = findEuclideanDistance(l2_normalize(img1_representation), l2_normalize(img2_representation))
 
   return distance
-
-def get_label(suspect_name):
-  label = suspect_name.split("/")[-1].replace(".jpg", "")
-  return re.sub('[0-9]', '', label)

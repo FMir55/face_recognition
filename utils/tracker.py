@@ -1,8 +1,6 @@
-import math
 from typing import Callable, List, Optional, Sequence
 
 import numpy as np
-# from norfair import Tracker
 from filterpy.kalman import KalmanFilter
 from rich import print
 
