@@ -50,6 +50,9 @@ def main():
     
     print(distance.cosine(embedding1, embedding2))
 
+    print(embedding1)
+    print(embedding2)
+
 
 if __name__ == '__main__':
     main()
