@@ -31,7 +31,7 @@ interpreter_emotion = get_interpreter(args.model_emotion)
 
 
 def inference_emotion(
-    cv2_im, interpreter_emotion, 
+    cv2_im, 
     labels = ['Angry', 'Disgust', 'Fear', 'Happy', 'Sad', 'Surprise', 'Neutral']
     ):
     inference_size_emotion = input_size(interpreter_emotion)
@@ -41,14 +41,14 @@ def inference_emotion(
     return labels[c.id]
 
 def inference_gender(
-    crop_224, interpreter_gender,
+    crop_224,
     labels = ['Female', 'Male']
     ):
     run_inference(interpreter_gender, crop_224.tobytes())
     c = get_classes(interpreter_gender, top_k=1)[0]
     return labels[c.id]
 
-def inference_age(crop_224, interpreter_age):
+def inference_age(crop_224):
     run_inference(interpreter_age, crop_224.tobytes())
     age_predictions = output_tensor(interpreter_age, 0)[0].copy()
     apparent_age = findApparentAge(age_predictions)
@@ -56,7 +56,7 @@ def inference_age(crop_224, interpreter_age):
 
 def get_attr(id, id2info, crop_bgr):
     # emotion
-    emotion = inference_emotion(cv2_im, interpreter_emotion)
+    emotion = inference_emotion(crop_bgr)
 
     # age/gender
     if id in id2info: 
