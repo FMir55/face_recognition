@@ -6,7 +6,7 @@ from pycoral.adapters.common import input_size, output_tensor
 from pycoral.adapters.detect import get_objects
 from pycoral.utils.edgetpu import make_interpreter, run_inference
 
-from utils.apis import get_face_age
+from utils.apis import get_face_age, get_face_info
 from utils.config import Args
 from utils.preprocess import preprocess_244, preprocess_gray
 
@@ -49,6 +49,27 @@ def inference_gender(
     c = get_classes(interpreter_gender, top_k=1)[0]
     return labels[c.id]
 
+def get_attr_v2(id, id2info, crop_bgr):
+    # emotion
+    emotion = inference_emotion(crop_bgr)
+
+    # age/gender
+    if id in id2info: 
+        age, gender = id2info[id].values()
+    else:
+        try:
+            face_info = get_face_info(crop_bgr)
+            _, age, gender = face_info.values()
+            
+            id2info[id] = {
+                "age" : age, 
+                "gender" : gender
+            }
+        except Exception as err:
+            print(str(err))
+            age, gender = '', ''
+
+    return f"{gender}, {age}y, {emotion}"
 
 def get_attr_v2(id, id2info, crop_bgr):
     # emotion
