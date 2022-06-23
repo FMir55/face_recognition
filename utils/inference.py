@@ -114,7 +114,7 @@ def get_embeddings_v2(suspects):
         embeddings.append(
             (
                 suspect,
-                inference_embedding(img, interpreter_emb)
+                inference_embedding(img)
             )
         )
     df = pd.DataFrame(embeddings, columns = ['suspect', 'embedding_template'])
