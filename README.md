@@ -8,3 +8,9 @@ https://docs.opencv.org/2.4/doc/tutorials/introduction/desktop_java/java_dev_int
 
 # Menu
 https://docs.google.com/document/d/1pRjQZGKMHvxv_LTAtD7VjiZuotjVR7sqHZ7skZVLYhE/edit?usp=sharing
+
+## v7
+10 sec
+
+## v8
+3 sec
