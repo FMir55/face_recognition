@@ -5,7 +5,29 @@ from preprocess import findApparentAge, preprocess_244, preprocess_gray
 from pycoral.adapters.classify import get_classes
 from pycoral.adapters.common import input_size, output_tensor
 from pycoral.adapters.detect import get_objects
-from pycoral.utils.edgetpu import run_inference
+from pycoral.utils.edgetpu import make_interpreter, run_inference
+
+from utils.config import Args
+
+
+def get_interpreter(path):
+  interpreter = make_interpreter(path)
+  interpreter.allocate_tensors()
+  return interpreter
+
+args = Args()
+
+# face detection
+interpreter_detection = get_interpreter(args.model_detection)
+inference_size_detection = input_size(interpreter_detection)
+
+# face embedding
+interpreter_emb = get_interpreter(args.model_emb)
+
+# face attribute
+interpreter_gender = get_interpreter(args.model_gender)
+interpreter_age = get_interpreter(args.model_age)
+interpreter_emotion = get_interpreter(args.model_emotion)
 
 
 def inference_emotion(
@@ -32,7 +54,11 @@ def inference_age(crop_224, interpreter_age):
     apparent_age = findApparentAge(age_predictions)
     return int(round(apparent_age))
 
-def get_attr(id, id2info, crop_bgr, interpreter_gender, interpreter_age):
+def get_attr(id, id2info, crop_bgr):
+    # emotion
+    emotion = inference_emotion(cv2_im, interpreter_emotion)
+
+    # age/gender
     if id in id2info: 
         age, gender = id2info[id].values()
     else:
@@ -46,12 +72,16 @@ def get_attr(id, id2info, crop_bgr, interpreter_gender, interpreter_age):
 
     return f"{gender}, {age}y"
 
-def inference_detection(cv2_im, interpreter_detection, threshold):
+def inference_detection(cv2_im, threshold):
     inference_size_detection = input_size(interpreter_detection)
     cv2_im_rgb = cv2.cvtColor(cv2_im, cv2.COLOR_BGR2RGB)
     cv2_im_rgb = cv2.resize(cv2_im_rgb, inference_size_detection)
     run_inference(interpreter_detection, cv2_im_rgb.tobytes())
-    return get_objects(interpreter_detection, threshold)
+    objs = get_objects(interpreter_detection, threshold)
+
+    height, width, _ = cv2_im.shape
+    scale_x, scale_y = width / inference_size_detection[0], height / inference_size_detection[1]
+    return objs, scale_x, scale_y
 
 def prewhiten(x):
     if x.ndim == 4:
@@ -69,7 +99,7 @@ def prewhiten(x):
     y = (x - mean) / std_adj
     return y
 
-def inference_embedding(cv2_im, interpreter_emb):
+def inference_embedding(cv2_im):
     inference_size_emb = input_size(interpreter_emb)
     cv2_im_rgb = cv2.cvtColor(cv2_im, cv2.COLOR_BGR2RGB)
     cv2_im_rgb = cv2.resize(cv2_im_rgb, inference_size_emb)
@@ -77,7 +107,7 @@ def inference_embedding(cv2_im, interpreter_emb):
     run_inference(interpreter_emb, aligned_images.tobytes())
     return output_tensor(interpreter_emb, 0)[0].copy()
 
-def get_embeddings_v2(suspects, interpreter_emb):
+def get_embeddings_v2(suspects):
     embeddings = []
     for suspect in suspects:
         img = cv2.imread(suspect)

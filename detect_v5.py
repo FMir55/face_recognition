@@ -7,9 +7,8 @@ from utils.bpm import get_pulse
 from utils.config import Args
 from utils.draw import draw_identity, make_bpm_plot
 from utils.inference import (get_attr, get_embeddings_v2, inference_detection,
-                             inference_embedding, inference_emotion)
-from utils.preparation import (clean_counter, do_identity, get_interpreter,
-                               get_suspects, prune)
+                             inference_embedding)
+from utils.preparation import clean_counter, do_identity, get_suspects, prune
 from utils.similarity import calc_dist, get_label
 from utils.tracker import convert_detection, get_tracker
 
@@ -21,18 +20,6 @@ def main():
     cap.set(3, 1920)
     cap.set(4, 1080)
 
-    # face detection
-    interpreter_detection = get_interpreter(args.model_detection)
-    inference_size_detection = input_size(interpreter_detection)
-
-    # face embedding
-    interpreter_emb = get_interpreter(args.model_emb)
-
-    # face attribute
-    interpreter_gender = get_interpreter(args.model_gender)
-    interpreter_age = get_interpreter(args.model_age)
-    interpreter_emotion = get_interpreter(args.model_emotion)
-
     # tracker
     tracker = get_tracker(args.initialization_delay, args.max_distance_between_points)
 
@@ -40,7 +27,7 @@ def main():
     suspects = get_suspects(args.path_face_db)
 
     # get face embeddings
-    df = get_embeddings_v2(suspects, interpreter_emb)
+    df = get_embeddings_v2(suspects)
 
     if do_identity(df): id2identity = {}
     id2info, id2cnt, id2bpm = {}, {}, {}
@@ -51,10 +38,7 @@ def main():
         ret, cv2_im = cap.read()
         if not ret: break
 
-        objs = inference_detection(cv2_im, interpreter_detection, args.threshold)
-
-        height, width, _ = cv2_im.shape
-        scale_x, scale_y = width / inference_size_detection[0], height / inference_size_detection[1]
+        objs, scale_x, scale_y = inference_detection(cv2_im, args.threshold)
         detections = [convert_detection(obj, scale_x, scale_y) for obj in objs]
         tracked_objects = tracker.update(detections=detections)
         ids = []
@@ -73,7 +57,7 @@ def main():
             # do attribute/identity
             if id2warmup[id] >= args.warmup_delay:
                 # attribute
-                attr = get_attr(id, id2info, crop_bgr, interpreter_gender, interpreter_age)
+                attr = get_attr(id, id2info, crop_bgr)
                 color = (255, 0, 0) if attr.split(',')[0] == 'Male' else (0, 0, 255)
 
                 # identity
@@ -94,7 +78,7 @@ def main():
                     # Not yet
                     else:
                         try:
-                            df['embedding_sample'] = [inference_embedding(crop_bgr, interpreter_emb)] * len(df)
+                            df['embedding_sample'] = [inference_embedding(crop_bgr)] * len(df)
                             df['distance'] = df.apply(calc_dist, axis = 1)
                             candidate = df.sort_values(by = ["distance"]).iloc[0]
                             suspect_name = candidate['suspect']

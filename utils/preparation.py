@@ -2,13 +2,7 @@ import os
 from pathlib import Path
 
 import numpy as np
-from pycoral.utils.edgetpu import make_interpreter
 
-
-def get_interpreter(path):
-  interpreter = make_interpreter(path)
-  interpreter.allocate_tensors()
-  return interpreter
 
 def mkdir(path):
   if not path.is_dir():
