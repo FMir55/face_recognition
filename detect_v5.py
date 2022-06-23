@@ -1,7 +1,6 @@
 from collections import Counter
 
 import cv2
-from pycoral.adapters.common import input_size
 
 from utils.bpm import get_pulse
 from utils.config import Args
