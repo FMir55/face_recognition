@@ -8,7 +8,7 @@ from pycoral.utils.edgetpu import make_interpreter, run_inference
 
 from utils.apis import get_face_info
 from utils.config import Args
-from utils.preprocess import preprocess_gray
+from utils.preprocess import preprocess_244, preprocess_gray
 
 
 def get_interpreter(path):
@@ -26,10 +26,8 @@ inference_size_detection = input_size(interpreter_detection)
 interpreter_emb = get_interpreter(args.model_emb)
 
 # face attribute
-'''
-interpreter_gender = get_interpreter(args.model_gender)
+# interpreter_gender = get_interpreter(args.model_gender)
 interpreter_age = get_interpreter(args.model_age)
-'''
 interpreter_emotion = get_interpreter(args.model_emotion)
 
 
@@ -52,8 +50,14 @@ def get_attr_v2(id, id2info, crop_bgr):
         age, gender = id2info[id].values()
     else:
         try:
+            # gender
+            crop_224 = preprocess_244(crop_bgr)
+            gender = inference_gender(crop_224)
+
+            # age
             face_info = get_face_info(crop_bgr)
-            _, age, gender = face_info.values()
+            _, age, _ = face_info.values()
+            
             id2info[id] = {
                 "age" : age, 
                 "gender" : gender
@@ -64,7 +68,7 @@ def get_attr_v2(id, id2info, crop_bgr):
 
     return f"{gender}, {age}y, {emotion}"
 
-'''
+
 def inference_gender(
     crop_224,
     labels = ['Female', 'Male']
@@ -73,6 +77,7 @@ def inference_gender(
     c = get_classes(interpreter_gender, top_k=1)[0]
     return labels[c.id]
 
+'''
 def inference_age(crop_224):
     run_inference(interpreter_age, crop_224.tobytes())
     age_predictions = output_tensor(interpreter_age, 0)[0].copy()
