@@ -20,7 +20,7 @@ class Args:
     model_emotion = '../all_models/emotion.tflite'
 
     # tracker
-    max_distance_between_points = 250 
+    max_distance_between_points = 300 
     initialization_delay = 10
 
     # capture
