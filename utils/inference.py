@@ -63,8 +63,8 @@ def get_attr(id, id2info, crop_bgr):
         age, gender = id2info[id].values()
     else:
         crop_224 = preprocess_244(crop_bgr)
-        gender = inference_gender(crop_224, interpreter_gender)
-        age = inference_age(crop_224, interpreter_age)
+        gender = inference_gender(crop_224)
+        age = inference_age(crop_224)
         id2info[id] = {
             "age" : age, 
             "gender" : gender
