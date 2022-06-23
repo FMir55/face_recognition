@@ -30,6 +30,7 @@ def main():
     prev_res = args.msg_no_face_cap
     while cap.isOpened():
         ret, cv2_im = cap.read()
+        cv2_clean = cv2_im.copy()
         if not ret: break
 
         cv2_im_rgb = cv2.cvtColor(cv2_im, cv2.COLOR_BGR2RGB)
@@ -44,7 +45,7 @@ def main():
         for tracked_object in tracked_objects:
             x0, y0, x1, y1 = tracked_object.last_detection.points.flatten()
             x0, y0, x1, y1 = prune(x0, y0, x1, y1)
-            crop_bgr = cv2_im[y0:y1, x0:x1]
+            crop_bgr = cv2_clean[y0:y1, x0:x1]
             
             # draw
             cv2_im = cv2.rectangle(cv2_im, (x0, y0), (x1, y1), (0, 255, 0), 2)
