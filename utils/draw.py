@@ -2,8 +2,15 @@ import cv2
 import numpy as np
 
 
+def clean_plot(cnt, ids):
+    ids2remove = set(cnt.keys()) - set(ids)
+    for id in ids2remove: 
+        plot_title = f"Data display(id={id}) - raw signal (top) and PSD (bottom)"
+        cv2.destroyWindow(plot_title)
+
 def combine(left, right):
-    """Stack images horizontally.
+    """
+    Stack images horizontally.
     """
     h = max(left.shape[0], right.shape[0])
     w = left.shape[1] + right.shape[1]

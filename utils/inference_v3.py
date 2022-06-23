@@ -9,6 +9,7 @@ from pycoral.utils.edgetpu import make_interpreter, run_inference
 from utils.apis import get_face_info_v2
 from utils.config import Args
 from utils.preprocess import preprocess_gray
+from utils.similarity import calc_dist
 
 
 def get_interpreter(path):
@@ -108,3 +109,12 @@ def get_embeddings_v2(suspects):
         )
     df = pd.DataFrame(embeddings, columns = ['suspect', 'embedding_template'])
     return df
+
+def match(df, crop_bgr):
+    df['embedding_sample'] = [inference_embedding(crop_bgr)] * len(df)
+    df['distance'] = df.apply(calc_dist, axis = 1)
+    candidate = df.sort_values(by = ["distance"]).iloc[0]
+    suspect_name = candidate['suspect']
+    best_distance = candidate['distance']
+    best_similarity = int((1 - best_distance)* 100)
+    return suspect_name, best_similarity

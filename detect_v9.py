@@ -4,11 +4,12 @@ import cv2
 
 from utils.bpm import get_pulse
 from utils.config import Args
-from utils.draw import draw_identity, make_bpm_plot
+from utils.debug import match_info
+from utils.draw import clean_plot, draw_identity, make_bpm_plot
 from utils.inference_v3 import (get_attr_v4, get_embeddings_v2,
-                                inference_detection, inference_embedding)
+                                inference_detection, match)
 from utils.preparation import clean_counter, do_identity, get_suspects, prune
-from utils.similarity import calc_dist, get_label
+from utils.similarity import get_label
 from utils.tracker import convert_detection, get_tracker
 
 args = Args()
@@ -77,20 +78,16 @@ def main():
                     # Not yet
                     else:
                         try:
-                            df['embedding_sample'] = [inference_embedding(crop_bgr)] * len(df)
-                            df['distance'] = df.apply(calc_dist, axis = 1)
-                            candidate = df.sort_values(by = ["distance"]).iloc[0]
-                            suspect_name = candidate['suspect']
-                            best_distance = candidate['distance']
-                            best_similarity = int((1 - best_distance)* 100)
-
-                            label = get_label(suspect_name) if best_similarity >= args.similarity_thresh else 'Unknown'
+                            # match identity
+                            suspect_name, best_similarity = match(df, crop_bgr)
+                            label = get_label(suspect_name) if best_similarity >= args.similarity_thresh else f"Unknown{id}"
                             id2cnt[id][label] += 1
-                            print(id, id2cnt[id].most_common(), label, best_similarity)
+
+                            match_info(id, label, best_similarity, id2cnt)
+                            
                             if id2cnt[id][label] >= args.match_delay:
-                                id2identity[id] = (suspect_name if label != 'Unknown' else None, 
-                                                    label,
-                                                    best_similarity)
+                                id2identity[id] = (suspect_name if not label.startswith('Unknown') else None, 
+                                                    label, best_similarity)
                                 
                                 # Start bpm
                                 id2bpm[id] = get_pulse(args.bpm_limits)
@@ -108,7 +105,7 @@ def main():
                         id2bpm[id] = get_pulse(args.bpm_limits)
 
                 # run bpm
-                name = label.split('_')[0] if do_identity(df) else "Data display"
+                name = label.split('_')[0] if do_identity(df) else f"Data display(id={id})"
                 plot_title = f"{name} - raw signal (top) and PSD (bottom)"
                 if id in id2bpm:
                     text_bpm = id2bpm[id].run(crop_bgr)
@@ -129,10 +126,12 @@ def main():
         
         clean_counter(id2warmup, ids)
         if do_identity(df): clean_counter(id2identity, ids)
+        clean_plot(id2bpm, ids)
         clean_counter(id2bpm, ids)
 
         res = ("No identity detected" if len(face_names)==0 else '_'.join(face_names)) + "(Press 'q' to quit)"
-        if res != prev_res: cv2.destroyAllWindows()
+        if res != prev_res: 
+            cv2.destroyAllWindows()
         cv2.imshow(res, cv2_im)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
