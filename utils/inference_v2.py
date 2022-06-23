@@ -26,8 +26,8 @@ inference_size_detection = input_size(interpreter_detection)
 interpreter_emb = get_interpreter(args.model_emb)
 
 # face attribute
-# interpreter_gender = get_interpreter(args.model_gender)
-interpreter_age = get_interpreter(args.model_age)
+interpreter_gender = get_interpreter(args.model_gender)
+# interpreter_age = get_interpreter(args.model_age)
 interpreter_emotion = get_interpreter(args.model_emotion)
 
 
