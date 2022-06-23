@@ -49,7 +49,7 @@ def inference_gender(
     c = get_classes(interpreter_gender, top_k=1)[0]
     return labels[c.id]
 
-def get_attr_v2(id, id2info, crop_bgr):
+def get_attr_v3(id, id2info, crop_bgr):
     # emotion
     emotion = inference_emotion(crop_bgr)
 
