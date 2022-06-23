@@ -1,13 +1,13 @@
 import cv2
 import numpy as np
 import pandas as pd
-from preprocess import findApparentAge, preprocess_244, preprocess_gray
 from pycoral.adapters.classify import get_classes
 from pycoral.adapters.common import input_size, output_tensor
 from pycoral.adapters.detect import get_objects
 from pycoral.utils.edgetpu import make_interpreter, run_inference
 
 from utils.config import Args
+from utils.preprocess import findApparentAge, preprocess_244, preprocess_gray
 
 
 def get_interpreter(path):
