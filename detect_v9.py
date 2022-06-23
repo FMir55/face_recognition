@@ -36,6 +36,7 @@ def main():
     while cap.isOpened():
         face_names = []
         ret, cv2_im = cap.read()
+        cv2_clean = cv2_im.copy()
         if not ret: break
 
         objs, scale_x, scale_y = inference_detection(cv2_im, args.threshold)
@@ -51,7 +52,7 @@ def main():
 
             x0, y0, x1, y1 = tracked_object.last_detection.points.flatten()
             x0, y0, x1, y1 = prune(x0, y0, x1, y1)
-            crop_bgr = cv2_im[y0:y1, x0:x1]
+            crop_bgr = cv2_clean[y0:y1, x0:x1]
             cv2.rectangle(cv2_im, (x0, y0), (x1, y1), (0, 255, 0), 2)
 
             # do attribute/identity
