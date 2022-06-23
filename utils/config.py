@@ -17,8 +17,6 @@ class Args:
     model_emb = '../all_models/facenet.tflite'
 
     # face_attribute
-    model_gender = '../all_models/gender.tflite'
-    model_age = '../all_models/age.tflite'
     model_emotion = '../all_models/emotion.tflite'
 
     # tracker

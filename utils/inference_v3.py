@@ -6,7 +6,7 @@ from pycoral.adapters.common import input_size, output_tensor
 from pycoral.adapters.detect import get_objects
 from pycoral.utils.edgetpu import make_interpreter, run_inference
 
-from utils.apis import get_face_info
+from utils.apis import get_face_info_v2
 from utils.config import Args
 from utils.preprocess import preprocess_gray
 
@@ -39,7 +39,7 @@ def inference_emotion(
     c = get_classes(interpreter_emotion, top_k=1)[0]
     return labels[c.id]
 
-def get_attr_v3(id, id2info, crop_bgr):
+def get_attr_v4(id, id2info, crop_bgr):
     # emotion
     emotion = inference_emotion(crop_bgr)
 
@@ -48,8 +48,8 @@ def get_attr_v3(id, id2info, crop_bgr):
         age, gender = id2info[id].values()
     else:
         try:
-            face_info = get_face_info(crop_bgr)
-            _, age, gender = face_info.values()
+            face_info = get_face_info_v2(crop_bgr)
+            age, gender = face_info.values()
             
             id2info[id] = {
                 "age" : age, 
@@ -60,7 +60,6 @@ def get_attr_v3(id, id2info, crop_bgr):
             age, gender = '', ''
 
     return f"{gender}, {age}y, {emotion}"
-
 
 def inference_detection(cv2_im, threshold):
     inference_size_detection = input_size(interpreter_detection)

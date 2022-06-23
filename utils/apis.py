@@ -4,6 +4,23 @@ import pandas as pd
 import requests
 
 
+def get_face_info_v2(img_bgr, fname='sample.jpg'):
+    _, encoded_image = cv2.imencode('.jpg', img_bgr)
+
+    files = {
+        "image": (fname, encoded_image.tobytes())
+    }
+
+    response = requests.post(
+        "https://heartrate.ap-mic.com/get_face_info_v2",
+        files=files
+    )
+    
+    return response.json()
+
+"""
+Legacy
+"""
 def get_face_age(img_bgr, fname='sample.jpg'):
     _, encoded_image = cv2.imencode('.jpg', img_bgr)
 
@@ -19,9 +36,6 @@ def get_face_age(img_bgr, fname='sample.jpg'):
     return response.json()['age']
 
 
-"""
-Legacy
-"""
 def get_face_info(img_bgr, fname='sample.jpg'):
     _, encoded_image = cv2.imencode('.jpg', img_bgr)
 
