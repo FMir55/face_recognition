@@ -66,7 +66,8 @@ class get_pulse(object):
             freqs = 60. * self.freqs
             idx = np.where((freqs > self.bpm_limits[0]) & (freqs < self.bpm_limits[1]))[0]
             idx = [i for i in idx if i < len(self.fft)]
-            if len(idx) == 0: self.text
+            if len(idx) == 0: 
+                return self.text
 
             pruned = self.fft[idx]
             phase = phase[idx]
