@@ -37,6 +37,7 @@ def main():
         ret, cv2_im = cap.read()
         cv2_clean = cv2_im.copy()
         info_box = np.zeros(args.info_box_shape, dtype=np.uint8)
+        print(info_box.shape)
         if not ret: break
 
         objs, scale_x, scale_y = inference_detection(cv2_im, args.threshold)
