@@ -6,7 +6,8 @@ import numpy as np
 from utils.bpm import get_pulse
 from utils.config import Args
 from utils.debug import match_info
-from utils.draw import clean_plot, draw_attr, draw_bpm, draw_identity_v2
+from utils.draw import (clean_plot, draw_attr, draw_bpm, draw_identity_v2,
+                        get_default_info_box, put_default_text)
 from utils.inference_v2 import (get_attr, get_embeddings_v2,
                                 inference_detection, match)
 from utils.preparation import clean_counter, do_identity, get_suspects, prune
@@ -40,10 +41,13 @@ def main():
         cv2_clean = cv2_im.copy()
         h, w, _ = cv2_im.shape
         w_new = int(w/h*args.scene_height)
+        '''
         info_box = np.ones(
             (args.scene_height, 1920-w_new, 3),
             dtype=np.uint8
         )*255
+        '''
+        info_box = get_default_info_box(w_new)
         if not ret: break
 
         objs, scale_x, scale_y = inference_detection(cv2_im, args.threshold)
@@ -124,6 +128,9 @@ def main():
         if do_identity(df): clean_counter(id2identity, ids)
         clean_plot(id2bpm, ids)
         clean_counter(id2bpm, ids)
+
+        if (info_box == get_default_info_box(w_new)).all():
+            info_box = put_default_text(info_box)
 
         # resize
         cv2_im = cv2.resize(

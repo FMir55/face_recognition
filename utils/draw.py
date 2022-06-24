@@ -6,6 +6,26 @@ from utils.config import Args
 
 args = Args()
 
+def get_default_info_box(w_new):
+    return np.ones(
+            (args.scene_height, 1920-w_new, 3),
+            dtype=np.uint8
+        )*255
+
+def put_default_text(info_box, color = (0, 0, 0), textSize=150):
+    h, w, _ = info_box.shape
+    h_line = int(h/5)
+    x0 = int(w/2)
+    y0 = int(h*0.05)
+    
+    info_box = cv2ImgAddText(info_box, '請', x0, y0+h_line*0, color, textSize)
+    info_box = cv2ImgAddText(info_box, '靠', x0, y0+h_line*0, color, textSize)
+    info_box = cv2ImgAddText(info_box, '近', x0, y0+h_line*0, color, textSize)
+    info_box = cv2ImgAddText(info_box, '鏡', x0, y0+h_line*0, color, textSize)
+    info_box = cv2ImgAddText(info_box, '頭', x0, y0+h_line*0, color, textSize)
+    return info_box
+
+
 def cv2ImgAddText(img, text, left, top, textColor, textSize):
     if (isinstance(img, np.ndarray)):
         img = Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
