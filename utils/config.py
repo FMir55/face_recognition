@@ -63,7 +63,7 @@ class Args:
     textSize_bpm = 25
     thickness = 3
     scale_x = 0.1
-    scale_y = 0.95
+    scale_y = 1.0
     path_font = 'fonts/simsun.ttc'
 
     pivot_img_size = 112 #face recognition result image
