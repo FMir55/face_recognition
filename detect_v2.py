@@ -6,9 +6,9 @@ import numpy as np
 from utils.bpm import get_pulse
 from utils.config import Args
 from utils.debug import match_info
-from utils.draw import clean_plot, draw_identity, make_bpm_plot
-from utils.inference import (get_attr_v4, get_embeddings_v2,
-                             inference_detection, match)
+from utils.draw import clean_plot, draw_attr, draw_bpm, draw_identity_v2
+from utils.inference_v2 import (get_attr, get_embeddings_v2,
+                                inference_detection, match)
 from utils.preparation import clean_counter, do_identity, get_suspects, prune
 from utils.similarity import get_label
 from utils.tracker import convert_detection, get_tracker
@@ -45,10 +45,10 @@ def main():
         cv2_clean = cv2_im.copy()
         h, w, _ = cv2_im.shape
         w_new = int(w/h*args.scene_height)
-        info_box = np.zeros(
+        info_box = np.ones(
             (args.scene_height, 1920-w_new, 3),
             dtype=np.uint8
-        )
+        )*255
         if not ret: break
 
         objs, scale_x, scale_y = inference_detection(cv2_im, args.threshold)
@@ -70,8 +70,9 @@ def main():
             # do attribute/identity
             if id2warmup[id] >= args.warmup_delay:
                 # attribute
-                attr = get_attr_v4(id, id2info, crop_bgr)
-                color = (255, 0, 0) if attr.split(',')[0] == 'Male' else (0, 0, 255)
+                gender, age, emotion = get_attr(id, id2info, crop_bgr)
+                color = (255, 0, 0) if gender.startswith('Male') else (0, 0, 255)
+                draw_attr(info_box, gender, age, emotion, color, args)
 
                 # identity
                 if do_identity(df):
@@ -81,7 +82,7 @@ def main():
                         # Identity checked
                         if suspect_name:
                             label += f"_{best_similarity}%"
-                            # draw_identity(suspect_name, label, cv2_im, (x0, y0, x1, y1), args)
+                            draw_identity_v2(info_box, suspect_name, label, color, args)
 
                         # Unknown checked
                         else:
@@ -119,11 +120,8 @@ def main():
                 # run bpm
                 if id in id2bpm:
                     text_bpm = id2bpm[id].run(crop_bgr)
-                    print(text_bpm)
-                    # cv2.putText(cv2_im, text_bpm, (x0, y1+60), args.font, 1.0, color, 2)
+                    draw_bpm(info_box, crop_bgr, text_bpm, id2bpm[id], color, args)
 
-                # draw
-                # cv2.putText(cv2_im, attr, (x0, y1+30), args.font, 1.0, color, 2)
                 print(attr)
 
             # 高乘載管制:1

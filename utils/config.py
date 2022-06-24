@@ -1,3 +1,4 @@
+import glob
 from pathlib import Path
 
 import cv2
@@ -32,11 +33,6 @@ class Args:
     match_delay = 5
     warmup_delay = 20
 
-    # draw
-    font = cv2.FONT_HERSHEY_SIMPLEX
-    text_color = (255,255,255)
-    pivot_img_size = 112 #face recognition result image
-
     # msg
     msg_no_face = "No face detected(press 'q' to quit)"
 
@@ -45,9 +41,33 @@ class Args:
     msg_no_face_cap = "No face detected"
     msg_ask_keep = "Wanna keep this face?(y/n)"
 
+    # emotion
+    emotion_table = {
+        "Angry":"生氣",
+        "Disgust":"作嘔",
+        "Fear":"恐懼",
+        "Happy":"喜悅",
+        "Sad":"傷心",
+        "Surprise":"驚訝",
+        "Neutral":"正常"
+    }
+
     # bpm
     bpm_limits=[50, 160]
 
-    # display
+    # draw
+    font = cv2.FONT_HERSHEY_SIMPLEX
+    text_color = (255,255,255)
+    scale = 1.0
+    thickness = 3
+
+    pivot_img_size = 112 #face recognition result image
+
     scene_height = 1080
     plot_title = "(Press 'q' to quit)"
+    face_table = {
+        suspect_name:cv2.imread(suspect_name)
+        for folder in glob.glob(str(path_face_db / Path('*')))\
+        for suspect_name in glob.glob(folder + '/*')
+    }
+
