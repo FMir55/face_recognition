@@ -60,6 +60,8 @@ class Args:
     text_color = (255,255,255)
     scale = 1.0
     thickness = 3
+    scale_x = 0.1
+    scale_y = 1.1
 
     pivot_img_size = 112 #face recognition result image
 

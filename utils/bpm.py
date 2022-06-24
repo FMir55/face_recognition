@@ -80,7 +80,7 @@ class get_pulse(object):
             self.bpm = self.freqs[idx2]
 
             gap = (self.buffer_size - L) / self.fps
-            self.text = "(heart rate: %0.1f bpm, wait %0.0f s)" % (self.bpm, gap) if gap else \
-                        "(heart rate: %0.1f bpm)" % (self.bpm)
+            self.text = "Heart Rate(心跳): %0.1f bpm (%0.0f s)" % (self.bpm, gap) if gap else \
+                        "Heart Rate(心跳): %0.1f bpm" % (self.bpm)
             
         return self.text

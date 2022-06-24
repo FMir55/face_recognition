@@ -14,7 +14,6 @@ def combine(left, right):
     """
     h = max(left.shape[0], right.shape[0])
     w = left.shape[1] + right.shape[1]
-    hoff = left.shape[0]
     
     shape = list(left.shape)
     shape[0] = h
@@ -28,16 +27,50 @@ def combine(left, right):
     
     return comb  
 
+def draw_attr(info_box, gender, age, emotion, color, args):
+    _, w, _ = info_box.shape
+    h_line, _ = get_heights(info_box)
+    line_x0 = int(w * args.scale_x)
+    line_y0 = int(w * args.scale_y)
+
+    # text
+    cv2.putText(info_box, gender, (line_x0, line_y0+h_line*1), args.font, args.scale, color, args.thickness)
+    cv2.putText(info_box, age, (line_x0, line_y0+h_line*2), args.font, args.scale, color, args.thickness)
+    cv2.putText(info_box, emotion, (line_x0, line_y0+h_line*3), args.font, args.scale, color, args.thickness)
+
+def draw_identity_v2(info_box, suspect_name, label, color, args):
+    # plot
+    _, w, _ = info_box.shape
+    h_line, _ = get_heights(info_box)
+    line_x0 = int(w * args.scale_x)
+    line_y0 = int(w * args.scale_y)
+
+    if suspect_name:
+        display_img = args.face_table[suspect_name]
+    else:
+        display_img = np.zeros(
+            (w, w, 3),
+            dtype=np.uint8
+        )
+    display_img = cv2.resize(display_img, (w, w))
+    info_box[:w, :, :3] = display_img
+
+    # text
+    cv2.putText(info_box, label, (line_x0, line_y0+h_line*0), args.font, args.scale, color, args.thickness)
+
 def draw_bpm(info_box, crop_bgr, text_bpm, processor, color, args):
     # plot
     _, w, _ = info_box.shape
     h_line, h_bpm = get_heights(info_box)
+    line_x0 = int(w * args.scale_x)
+    line_y0 = int(w * args.scale_y)
+
     plot = make_bpm_plot(processor, crop_bgr, h_bpm, w)
     if plot is not None:
         info_box[-h_bpm:, :, :3] = plot
     
     # text
-    cv2.putText(info_box, text_bpm, (0, w+h_line*4), args.font, args.scale, color, args.thickness)
+    cv2.putText(info_box, text_bpm, (line_x0, line_y0+h_line*4), args.font, args.scale, color, args.thickness)
 
 
 def make_bpm_plot(processor, crop_bgr, h_bpm=280, w_bpm=640):
@@ -132,32 +165,6 @@ def get_heights(info_box):
     h_bpm = int(w/640*280)
     h_line = int((h-w-h_bpm)/5)
     return h_line, h_bpm
-
-def draw_attr(info_box, gender, age, emotion, color, args):
-    _, w, _ = info_box.shape
-    h_line, _ = get_heights(info_box)
-
-    # text
-    cv2.putText(info_box, gender, (0, w+h_line*1), args.font, args.scale, color, args.thickness)
-    cv2.putText(info_box, age, (0, w+h_line*2), args.font, args.scale, color, args.thickness)
-    cv2.putText(info_box, emotion, (0, w+h_line*3), args.font, args.scale, color, args.thickness)
-
-def draw_identity_v2(info_box, suspect_name, label, color, args):
-    # plot
-    _, w, _ = info_box.shape
-    h_line, _ = get_heights(info_box)
-    if suspect_name:
-        display_img = args.face_table[suspect_name]
-    else:
-        display_img = np.zeros(
-            (w, w, 3),
-            dtype=np.uint8
-        )
-    display_img = cv2.resize(display_img, (w, w))
-    info_box[:w, :, :3] = display_img
-
-    # text
-    cv2.putText(info_box, label, (0, w+h_line*0), args.font, args.scale, color, args.thickness)
 
 def draw_identity(suspect_name, label, cv2_im, bbox, args):
     x0, y0, x1, y1 = bbox

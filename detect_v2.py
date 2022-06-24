@@ -18,13 +18,8 @@ args = Args()
 def main():
     # camera
     cap = cv2.VideoCapture(args.camera_idx)
-    '''
-    cap.set(3, 1080)
-    cap.set(4, 1080)
-    '''
     cap.set(3, 5000)
     cap.set(4, 5000)
-
 
     # tracker
     tracker = get_tracker(args.initialization_delay, args.max_distance_between_points)
