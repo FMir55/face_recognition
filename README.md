@@ -17,3 +17,8 @@ https://docs.google.com/document/d/1pRjQZGKMHvxv_LTAtD7VjiZuotjVR7sqHZ7skZVLYhE/
 
 ## v9
 2 sec
+
+
+# cd home/mendel/face_recognition
+# cd;rm -rf face_recognition;git clone https://github.com/FMir55/face_recognition;cd face_recognition
+# rm -rf ../face_db/*
