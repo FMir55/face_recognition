@@ -33,7 +33,8 @@ def draw_bpm(info_box, crop_bgr, text_bpm, processor, color, args):
     _, w, _ = info_box.shape
     h_line, h_bpm = get_heights(info_box)
     plot = make_bpm_plot(processor, crop_bgr)
-    info_box[-h_bpm:, :, :3] = plot
+    if plot:
+        info_box[-h_bpm:, :, :3] = plot
     
     # text
     cv2.putText(info_box, text_bpm, (0, w+h_line*4), args.font, args.scale, color, args.thickness)
