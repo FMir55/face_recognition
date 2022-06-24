@@ -18,8 +18,13 @@ args = Args()
 def main():
     # camera
     cap = cv2.VideoCapture(args.camera_idx)
+    '''
     cap.set(3, 1080)
     cap.set(4, 1080)
+    '''
+    cap.set(3, 5000)
+    cap.set(4, 5000)
+
 
     # tracker
     tracker = get_tracker(args.initialization_delay, args.max_distance_between_points)
@@ -35,9 +40,11 @@ def main():
     id2warmup = Counter()
     while cap.isOpened():
         ret, cv2_im = cap.read()
+        print(cv2_im.shape)
+        return 0
+        
         cv2_clean = cv2_im.copy()
         info_box = np.zeros(args.info_box_shape, dtype=np.uint8)
-        print(info_box.shape)
         if not ret: break
 
         objs, scale_x, scale_y = inference_detection(cv2_im, args.threshold)
