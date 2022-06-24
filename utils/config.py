@@ -51,5 +51,5 @@ class Args:
     # display
     scene_width = 1080
     scene_shape = (scene_width, scene_width, 3)
-    info_box_shape = (1920-scene_width, scene_width, 3) # h w c
+    info_box_shape = (scene_width, 1920-scene_width, 3) # h w c
     plot_title = "(Press 'q' to quit)"
