@@ -6,8 +6,8 @@ from utils.bpm import get_pulse
 from utils.config import Args
 from utils.debug import match_info
 from utils.draw import clean_plot, draw_identity, make_bpm_plot
-from utils.inference_v3 import (get_attr_v4, get_embeddings_v2,
-                                inference_detection, match)
+from utils.inference import (get_attr_v4, get_embeddings_v2,
+                             inference_detection, match)
 from utils.preparation import clean_counter, do_identity, get_suspects, prune
 from utils.similarity import get_label
 from utils.tracker import convert_detection, get_tracker

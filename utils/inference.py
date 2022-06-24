@@ -6,9 +6,10 @@ from pycoral.adapters.common import input_size, output_tensor
 from pycoral.adapters.detect import get_objects
 from pycoral.utils.edgetpu import make_interpreter, run_inference
 
-from utils.apis import get_face_info
+from utils.apis import get_face_info_v2
 from utils.config import Args
 from utils.preprocess import preprocess_gray
+from utils.similarity import calc_dist
 
 
 def get_interpreter(path):
@@ -26,10 +27,6 @@ inference_size_detection = input_size(interpreter_detection)
 interpreter_emb = get_interpreter(args.model_emb)
 
 # face attribute
-'''
-interpreter_gender = get_interpreter(args.model_gender)
-interpreter_age = get_interpreter(args.model_age)
-'''
 interpreter_emotion = get_interpreter(args.model_emotion)
 
 
@@ -43,7 +40,7 @@ def inference_emotion(
     c = get_classes(interpreter_emotion, top_k=1)[0]
     return labels[c.id]
 
-def get_attr_v2(id, id2info, crop_bgr):
+def get_attr_v4(id, id2info, crop_bgr):
     # emotion
     emotion = inference_emotion(crop_bgr)
 
@@ -52,8 +49,9 @@ def get_attr_v2(id, id2info, crop_bgr):
         age, gender = id2info[id].values()
     else:
         try:
-            face_info = get_face_info(crop_bgr)
-            _, age, gender = face_info.values()
+            face_info = get_face_info_v2(crop_bgr)
+            age, gender = face_info.values()
+            
             id2info[id] = {
                 "age" : age, 
                 "gender" : gender
@@ -63,40 +61,6 @@ def get_attr_v2(id, id2info, crop_bgr):
             age, gender = '', ''
 
     return f"{gender}, {age}y, {emotion}"
-
-'''
-def inference_gender(
-    crop_224,
-    labels = ['Female', 'Male']
-    ):
-    run_inference(interpreter_gender, crop_224.tobytes())
-    c = get_classes(interpreter_gender, top_k=1)[0]
-    return labels[c.id]
-
-def inference_age(crop_224):
-    run_inference(interpreter_age, crop_224.tobytes())
-    age_predictions = output_tensor(interpreter_age, 0)[0].copy()
-    apparent_age = findApparentAge(age_predictions)
-    return int(round(apparent_age))
-
-def get_attr(id, id2info, crop_bgr):
-    # emotion
-    emotion = inference_emotion(crop_bgr)
-
-    # age/gender
-    if id in id2info: 
-        age, gender = id2info[id].values()
-    else:
-        crop_224 = preprocess_244(crop_bgr)
-        gender = inference_gender(crop_224)
-        age = inference_age(crop_224)
-        id2info[id] = {
-            "age" : age, 
-            "gender" : gender
-        }
-
-    return f"{gender}, {age}y, {emotion}"
-'''
 
 def inference_detection(cv2_im, threshold):
     inference_size_detection = input_size(interpreter_detection)
@@ -145,3 +109,12 @@ def get_embeddings_v2(suspects):
         )
     df = pd.DataFrame(embeddings, columns = ['suspect', 'embedding_template'])
     return df
+
+def match(df, crop_bgr):
+    df['embedding_sample'] = [inference_embedding(crop_bgr)] * len(df)
+    df['distance'] = df.apply(calc_dist, axis = 1)
+    candidate = df.sort_values(by = ["distance"]).iloc[0]
+    suspect_name = candidate['suspect']
+    best_distance = candidate['distance']
+    best_similarity = int((1 - best_distance)* 100)
+    return suspect_name, best_similarity
