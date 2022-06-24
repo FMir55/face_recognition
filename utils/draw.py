@@ -1,6 +1,21 @@
 import cv2
 import numpy as np
+from PIL import Image, ImageDraw, ImageFont
 
+from utils.config import Args
+
+args = Args()
+
+def cv2ImgAddText(img, text, left, top, textColor=(0, 255, 0)):
+    if (isinstance(img, np.ndarray)):
+        img = Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
+    draw = ImageDraw.Draw(img)
+
+    fontText = ImageFont.truetype(
+        args.path_font, args.textSize, encoding="utf-8")
+
+    draw.text((left, top), text, textColor, font=fontText)
+    return cv2.cvtColor(np.asarray(img), cv2.COLOR_RGB2BGR)
 
 def clean_plot(cnt, ids):
     ids2remove = set(cnt.keys()) - set(ids)
@@ -27,18 +42,25 @@ def combine(left, right):
     
     return comb  
 
-def draw_attr(info_box, gender, age, emotion, color, args):
+def draw_attr(info_box, gender, age, emotion, color):
     _, w, _ = info_box.shape
     h_line, _ = get_heights(info_box)
     line_x0 = int(w * args.scale_x)
     line_y0 = int(w * args.scale_y)
 
     # text
+    '''
     cv2.putText(info_box, gender, (line_x0, line_y0+h_line*1), args.font, args.scale, color, args.thickness)
     cv2.putText(info_box, age, (line_x0, line_y0+h_line*2), args.font, args.scale, color, args.thickness)
     cv2.putText(info_box, emotion, (line_x0, line_y0+h_line*3), args.font, args.scale, color, args.thickness)
+    '''
 
-def draw_identity_v2(info_box, suspect_name, label, color, args):
+    info_box = cv2ImgAddText(info_box, gender, line_x0, line_y0+h_line*1)
+    info_box = cv2ImgAddText(info_box, age, line_x0, line_y0+h_line*2)
+    info_box = cv2ImgAddText(info_box, emotion, line_x0, line_y0+h_line*3)
+    return info_box
+
+def draw_identity_v2(info_box, suspect_name, label, color):
     # plot
     _, w, _ = info_box.shape
     h_line, _ = get_heights(info_box)
@@ -56,9 +78,10 @@ def draw_identity_v2(info_box, suspect_name, label, color, args):
     info_box[:w, :, :3] = display_img
 
     # text
-    cv2.putText(info_box, label, (line_x0, line_y0+h_line*0), args.font, args.scale, color, args.thickness)
+    # cv2.putText(info_box, label, (line_x0, line_y0+h_line*0), args.font, args.scale, color, args.thickness)
+    info_box = cv2ImgAddText(info_box, label, line_x0, line_y0+h_line*0)
 
-def draw_bpm(info_box, crop_bgr, text_bpm, processor, color, args):
+def draw_bpm(info_box, crop_bgr, text_bpm, processor, color):
     # plot
     _, w, _ = info_box.shape
     h_line, h_bpm = get_heights(info_box)
@@ -70,7 +93,8 @@ def draw_bpm(info_box, crop_bgr, text_bpm, processor, color, args):
         info_box[-h_bpm:, :, :3] = plot
     
     # text
-    cv2.putText(info_box, text_bpm, (line_x0, line_y0+h_line*4), args.font, args.scale, color, args.thickness)
+    # cv2.putText(info_box, text_bpm, (line_x0, line_y0+h_line*4), args.font, args.scale, color, args.thickness)
+    info_box = cv2ImgAddText(info_box, text_bpm, line_x0, line_y0+h_line*4)
 
 
 def make_bpm_plot(processor, crop_bgr, h_bpm=280, w_bpm=640):
@@ -166,7 +190,7 @@ def get_heights(info_box):
     h_line = int((h-w-h_bpm)/5)
     return h_line, h_bpm
 
-def draw_identity(suspect_name, label, cv2_im, bbox, args):
+def draw_identity(suspect_name, label, cv2_im, bbox):
     x0, y0, x1, y1 = bbox
     display_img = cv2.imread(suspect_name)
     display_img = cv2.resize(display_img, (args.pivot_img_size, args.pivot_img_size))

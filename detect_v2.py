@@ -66,8 +66,8 @@ def main():
             if id2warmup[id] >= args.warmup_delay:
                 # attribute
                 gender, age, emotion = get_attr(id, id2info, crop_bgr)
-                color = (255, 0, 0) if gender.startswith('Male') else (0, 0, 255)
-                draw_attr(info_box, gender, age, emotion, color, args)
+                color = (0, 0, 255) if gender.startswith('Male') else (255, 0, 0)
+                draw_attr(info_box, gender, age, emotion, color)
 
                 # identity
                 if do_identity(df):
@@ -77,11 +77,11 @@ def main():
                         # Identity checked
                         if suspect_name:
                             label += f"_{best_similarity}%"
-                            draw_identity_v2(info_box, suspect_name, label, color, args)
-
                         # Unknown checked
                         else:
                             pass
+
+                        draw_identity_v2(info_box, suspect_name, label, color)
 
                     # Not yet
                     else:
@@ -115,7 +115,7 @@ def main():
                 # run bpm
                 if id in id2bpm:
                     text_bpm = id2bpm[id].run(crop_bgr)
-                    draw_bpm(info_box, crop_bgr, text_bpm, id2bpm[id], color, args)
+                    draw_bpm(info_box, crop_bgr, text_bpm, id2bpm[id], color)
 
             # 高乘載管制:1
             break

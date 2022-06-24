@@ -70,7 +70,7 @@ def main():
                         # Identity checked
                         if suspect_name:
                             label += f"_{best_similarity}%"
-                            draw_identity(suspect_name, label, cv2_im, (x0, y0, x1, y1), args)
+                            draw_identity(suspect_name, label, cv2_im, (x0, y0, x1, y1))
 
                         # Unknown checked
                         else:
