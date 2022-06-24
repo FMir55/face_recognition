@@ -39,12 +39,16 @@ def main():
     id2info, id2cnt, id2bpm = {}, {}, {}
     id2warmup = Counter()
     while cap.isOpened():
+        # (980 1280 3)
         ret, cv2_im = cap.read()
-        print(cv2_im.shape)
-        return 0
         
         cv2_clean = cv2_im.copy()
-        info_box = np.zeros(args.info_box_shape, dtype=np.uint8)
+        h, w, _ = cv2_im.shape
+        w_new = int(w/h*args.scene_height)
+        info_box = np.zeros(
+            (args.scene_height, 1920-w_new, 3),
+            dtype=np.uint8
+        )
         if not ret: break
 
         objs, scale_x, scale_y = inference_detection(cv2_im, args.threshold)
@@ -131,8 +135,12 @@ def main():
         clean_counter(id2bpm, ids)
 
         # resize
-        cv2_im = cv2.resize(cv2_im, args.scene_shape[:2], interpolation=cv2.INTER_AREA)
-        # concat
+        cv2_im = cv2.resize(
+            cv2_im, 
+            (w_new, args.scene_height), 
+            interpolation=cv2.INTER_AREA
+        )
+        # concat (1080, 1920, 3)
         cv2_final = cv2.hconcat([info_box, cv2_im])
         cv2.imshow(args.plot_title, cv2_final)
         if cv2.waitKey(1) & 0xFF == ord('q'):
