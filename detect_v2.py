@@ -81,7 +81,7 @@ def main():
 
                         # Unknown checked
                         else:
-                            attr += f"({label})"
+                            pass
 
                     # Not yet
                     else:
