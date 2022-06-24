@@ -6,7 +6,7 @@ from utils.config import Args
 
 args = Args()
 
-def cv2ImgAddText(img, text, left, top, textColor=(0, 255, 0), textSize):
+def cv2ImgAddText(img, text, left, top, textColor, textSize):
     if (isinstance(img, np.ndarray)):
         img = Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
     draw = ImageDraw.Draw(img)
