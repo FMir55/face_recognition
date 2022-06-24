@@ -6,13 +6,13 @@ from utils.config import Args
 
 args = Args()
 
-def cv2ImgAddText(img, text, left, top, textColor=(0, 255, 0)):
+def cv2ImgAddText(img, text, left, top, textColor=(0, 255, 0), textSize):
     if (isinstance(img, np.ndarray)):
         img = Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
     draw = ImageDraw.Draw(img)
 
     fontText = ImageFont.truetype(
-        args.path_font, args.textSize, encoding="utf-8")
+        args.path_font, textSize, encoding="utf-8")
 
     draw.text((left, top), text, textColor, font=fontText)
     return cv2.cvtColor(np.asarray(img), cv2.COLOR_RGB2BGR)
@@ -49,15 +49,9 @@ def draw_attr(info_box, gender, age, emotion, color):
     line_y0 = int(w * args.scale_y)
 
     # text
-    '''
-    cv2.putText(info_box, gender, (line_x0, line_y0+h_line*1), args.font, args.scale, color, args.thickness)
-    cv2.putText(info_box, age, (line_x0, line_y0+h_line*2), args.font, args.scale, color, args.thickness)
-    cv2.putText(info_box, emotion, (line_x0, line_y0+h_line*3), args.font, args.scale, color, args.thickness)
-    '''
-
-    info_box = cv2ImgAddText(info_box, gender, line_x0, line_y0+h_line*1, color)
-    info_box = cv2ImgAddText(info_box, age, line_x0, line_y0+h_line*2, color)
-    info_box = cv2ImgAddText(info_box, emotion, line_x0, line_y0+h_line*3, color)
+    info_box = cv2ImgAddText(info_box, gender, line_x0, line_y0+h_line*1, color, args.textSize)
+    info_box = cv2ImgAddText(info_box, age, line_x0, line_y0+h_line*2, color, args.textSize)
+    info_box = cv2ImgAddText(info_box, emotion, line_x0, line_y0+h_line*3, color, args.textSize)
     return info_box
 
 def draw_identity_v2(info_box, suspect_name, label, color):
@@ -78,8 +72,7 @@ def draw_identity_v2(info_box, suspect_name, label, color):
     info_box[:w, :, :3] = display_img
 
     # text
-    # cv2.putText(info_box, label, (line_x0, line_y0+h_line*0), args.font, args.scale, color, args.thickness)
-    info_box = cv2ImgAddText(info_box, label, line_x0, line_y0+h_line*0, color)
+    info_box = cv2ImgAddText(info_box, label, line_x0, line_y0+h_line*0, color, args.textSize)
     return info_box
 
 def draw_bpm(info_box, crop_bgr, text_bpm, processor, color):
@@ -94,8 +87,7 @@ def draw_bpm(info_box, crop_bgr, text_bpm, processor, color):
         info_box[-h_bpm:, :, :3] = plot
     
     # text
-    # cv2.putText(info_box, text_bpm, (line_x0, line_y0+h_line*4), args.font, args.scale, color, args.thickness)
-    info_box = cv2ImgAddText(info_box, text_bpm, line_x0, line_y0+h_line*4, color)
+    info_box = cv2ImgAddText(info_box, text_bpm, line_x0, line_y0+h_line*4, color, args.textSize_bpm)
     return info_box
 
 def make_bpm_plot(processor, crop_bgr, h_bpm=280, w_bpm=640):
