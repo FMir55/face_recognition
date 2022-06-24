@@ -33,7 +33,7 @@ def draw_bpm(info_box, crop_bgr, text_bpm, processor, color, args):
     _, w, _ = info_box.shape
     h_line, h_bpm = get_heights(info_box)
     plot = make_bpm_plot(processor, crop_bgr)
-    if plot:
+    if plot is not None:
         info_box[-h_bpm:, :, :3] = plot
     
     # text
