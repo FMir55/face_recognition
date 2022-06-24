@@ -133,6 +133,9 @@ def main():
         )
         # concat (1080, 1920, 3)
         cv2_final = cv2.hconcat([info_box, cv2_im])
+
+        cv2.namedWindow(args.plot_title, cv2.WINDOW_NORMAL)
+        cv2.setWindowProperty(args.plot_title, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
         cv2.imshow(args.plot_title, cv2_final)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
