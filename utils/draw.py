@@ -80,6 +80,7 @@ def draw_identity_v2(info_box, suspect_name, label, color):
     # text
     # cv2.putText(info_box, label, (line_x0, line_y0+h_line*0), args.font, args.scale, color, args.thickness)
     info_box = cv2ImgAddText(info_box, label, line_x0, line_y0+h_line*0)
+    return info_box
 
 def draw_bpm(info_box, crop_bgr, text_bpm, processor, color):
     # plot
@@ -95,7 +96,7 @@ def draw_bpm(info_box, crop_bgr, text_bpm, processor, color):
     # text
     # cv2.putText(info_box, text_bpm, (line_x0, line_y0+h_line*4), args.font, args.scale, color, args.thickness)
     info_box = cv2ImgAddText(info_box, text_bpm, line_x0, line_y0+h_line*4)
-
+    return info_box
 
 def make_bpm_plot(processor, crop_bgr, h_bpm=280, w_bpm=640):
     """
