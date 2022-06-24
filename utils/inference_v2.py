@@ -61,7 +61,7 @@ def get_attr(id, id2info, crop_bgr):
             age, gender = '', ''
 
     return (
-        f"{gender}({'男' if gender == 'Male' else '女'})" 
+        f"{gender}({'男' if gender == 'Male' else '女'})",
         f"{age} y", 
         f"{emotion}({args.emotion_table[emotion]})"
     )
