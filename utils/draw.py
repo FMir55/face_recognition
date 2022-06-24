@@ -14,7 +14,7 @@ def cv2ImgAddText(img, text, left, top, textColor=(0, 255, 0)):
     fontText = ImageFont.truetype(
         args.path_font, args.textSize, encoding="utf-8")
 
-    draw.text((left, top), text, args.colo, font=fontText)
+    draw.text((left, top), text, textColor, font=fontText)
     return cv2.cvtColor(np.asarray(img), cv2.COLOR_RGB2BGR)
 
 def clean_plot(cnt, ids):
