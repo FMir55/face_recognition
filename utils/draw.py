@@ -32,7 +32,7 @@ def draw_bpm(info_box, crop_bgr, text_bpm, processor, color, args):
     # plot
     _, w, _ = info_box.shape
     h_line, h_bpm = get_heights(info_box)
-    plot = make_bpm_plot(processor, crop_bgr)
+    plot = make_bpm_plot(processor, crop_bgr, h_bpm, w)
     if plot is not None:
         info_box[-h_bpm:, :, :3] = plot
     
@@ -40,7 +40,7 @@ def draw_bpm(info_box, crop_bgr, text_bpm, processor, color, args):
     cv2.putText(info_box, text_bpm, (0, w+h_line*4), args.font, args.scale, color, args.thickness)
 
 
-def make_bpm_plot(processor, crop_bgr):
+def make_bpm_plot(processor, crop_bgr, h_bpm=280, w_bpm=640):
     """
     Creates and/or updates the data display
     """
@@ -53,7 +53,7 @@ def make_bpm_plot(processor, crop_bgr):
     return plotXY(
         data,
         labels=[False, True], showmax=[False, "bpm"], label_ndigits=[0, 0],
-        showmax_digits=[0, 1], skip=[3, 3], bg=crop_bgr
+        showmax_digits=[0, 1], skip=[3, 3], bg=crop_bgr, size=(h_bpm, w_bpm)
     )
 
 def plotXY(
