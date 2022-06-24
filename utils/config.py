@@ -68,7 +68,7 @@ class Args:
 
     pivot_img_size = 112 #face recognition result image
 
-    scene_height = 960
+    scene_height = 1000
     plot_title = "(Press 'q' to quit)"
     face_table = {
         suspect_name:cv2.imread(suspect_name)
