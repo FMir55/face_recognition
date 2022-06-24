@@ -16,7 +16,7 @@ def put_default_text(info_box, color = (0, 0, 0), textSize=200):
     h, w, _ = info_box.shape
     h_line = int(h/5)
     x0 = int(w*0.35)
-    y0 = int(h*0.02)
+    y0 = int(h*0.01)
     
     info_box = cv2ImgAddText(info_box, '請', x0, y0+h_line*0, color, textSize)
     info_box = cv2ImgAddText(info_box, '靠', x0, y0+h_line*1, color, textSize)
