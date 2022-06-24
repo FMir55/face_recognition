@@ -60,7 +60,7 @@ class Args:
     text_color = (255,255,255)
     scale = 1.0
     textSize = 50
-    textSize_bpm = 30
+    textSize_bpm = 25
     thickness = 3
     scale_x = 0.1
     scale_y = 1.02
