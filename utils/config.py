@@ -59,10 +59,10 @@ class Args:
     font = cv2.FONT_HERSHEY_SIMPLEX
     text_color = (255,255,255)
     scale = 1.0
-    textSize=20
+    textSize=50
     thickness = 3
     scale_x = 0.1
-    scale_y = 1.1
+    scale_y = 1.05
     path_font = 'fonts/simsun.ttc'
 
     pivot_img_size = 112 #face recognition result image

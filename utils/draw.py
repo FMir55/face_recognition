@@ -14,7 +14,7 @@ def cv2ImgAddText(img, text, left, top, textColor=(0, 255, 0)):
     fontText = ImageFont.truetype(
         args.path_font, args.textSize, encoding="utf-8")
 
-    draw.text((left, top), text, textColor, font=fontText)
+    draw.text((left, top), text, args.colo, font=fontText)
     return cv2.cvtColor(np.asarray(img), cv2.COLOR_RGB2BGR)
 
 def clean_plot(cnt, ids):
@@ -55,9 +55,9 @@ def draw_attr(info_box, gender, age, emotion, color):
     cv2.putText(info_box, emotion, (line_x0, line_y0+h_line*3), args.font, args.scale, color, args.thickness)
     '''
 
-    info_box = cv2ImgAddText(info_box, gender, line_x0, line_y0+h_line*1)
-    info_box = cv2ImgAddText(info_box, age, line_x0, line_y0+h_line*2)
-    info_box = cv2ImgAddText(info_box, emotion, line_x0, line_y0+h_line*3)
+    info_box = cv2ImgAddText(info_box, gender, line_x0, line_y0+h_line*1, color)
+    info_box = cv2ImgAddText(info_box, age, line_x0, line_y0+h_line*2, color)
+    info_box = cv2ImgAddText(info_box, emotion, line_x0, line_y0+h_line*3, color)
     return info_box
 
 def draw_identity_v2(info_box, suspect_name, label, color):
@@ -79,7 +79,7 @@ def draw_identity_v2(info_box, suspect_name, label, color):
 
     # text
     # cv2.putText(info_box, label, (line_x0, line_y0+h_line*0), args.font, args.scale, color, args.thickness)
-    info_box = cv2ImgAddText(info_box, label, line_x0, line_y0+h_line*0)
+    info_box = cv2ImgAddText(info_box, label, line_x0, line_y0+h_line*0, color)
     return info_box
 
 def draw_bpm(info_box, crop_bgr, text_bpm, processor, color):
@@ -95,7 +95,7 @@ def draw_bpm(info_box, crop_bgr, text_bpm, processor, color):
     
     # text
     # cv2.putText(info_box, text_bpm, (line_x0, line_y0+h_line*4), args.font, args.scale, color, args.thickness)
-    info_box = cv2ImgAddText(info_box, text_bpm, line_x0, line_y0+h_line*4)
+    info_box = cv2ImgAddText(info_box, text_bpm, line_x0, line_y0+h_line*4, color)
     return info_box
 
 def make_bpm_plot(processor, crop_bgr, h_bpm=280, w_bpm=640):
