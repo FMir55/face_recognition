@@ -125,8 +125,8 @@ def main():
         # resize
         cv2_im = cv2.resize(cv2_im, args.scene_shape[:2], interpolation=cv2.INTER_AREA)
         # concat
-        cv2_im = cv2.hconcat([info_box, cv2_im])
-        cv2.imshow(args.plot_title, cv2_im)
+        cv2_final = cv2.hconcat([info_box, cv2_im])
+        cv2.imshow(args.plot_title, cv2_final)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
