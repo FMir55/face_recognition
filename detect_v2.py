@@ -36,7 +36,7 @@ def main():
     while cap.isOpened():
         ret, cv2_im = cap.read()
         cv2_clean = cv2_im.copy()
-        info_box = np.zeros(args.info_box_shape, dtype=np.uint8)
+        info_box = np.zeros(tuple(reversed(args.info_box_shape[:2])), dtype=np.uint8)
         print(info_box.shape)
         if not ret: break
 
