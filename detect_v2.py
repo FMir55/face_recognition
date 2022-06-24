@@ -122,8 +122,6 @@ def main():
                     text_bpm = id2bpm[id].run(crop_bgr)
                     draw_bpm(info_box, crop_bgr, text_bpm, id2bpm[id], color, args)
 
-                print(attr)
-
             # 高乘載管制:1
             break
         
