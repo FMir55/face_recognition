@@ -49,7 +49,5 @@ class Args:
     bpm_limits=[50, 160]
 
     # display
-    scene_width = 1080
-    scene_shape = (scene_width, scene_width, 3)
-    info_box_shape = (scene_width, 1920-scene_width, 3) # h w c
+    scene_height = 1080
     plot_title = "(Press 'q' to quit)"
