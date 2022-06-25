@@ -1,17 +1,17 @@
 from collections import Counter
 
 import cv2
-import numpy as np
 
 from utils.bpm import get_pulse
 from utils.config import Args
 from utils.debug import match_info
-from utils.draw import (clean_plot, draw_attr, draw_bpm, draw_identity_v2,
-                        get_default_info_box, put_default_text)
-from utils.inference_v2 import (get_attr, get_embeddings_v2,
-                                inference_detection, match)
+from utils.draw_v2 import (clean_plot, draw_attr, draw_bpm, draw_identity,
+                           get_default_info_box, put_default_text)
+from utils.get_info import (get_age_gender, get_bpm_emotion, get_embeddings,
+                            match)
+from utils.inference_v3 import inference_detection
 from utils.preparation import clean_counter, do_identity, get_suspects, prune
-from utils.similarity import get_label
+from utils.similarity_v2 import get_label
 from utils.tracker import convert_detection, get_tracker
 
 args = Args()
@@ -29,7 +29,7 @@ def main():
     suspects = get_suspects(args.path_face_db)
 
     # get face embeddings
-    df = get_embeddings_v2(suspects)
+    df = get_embeddings(suspects)
 
     if do_identity(df): id2identity = {}
     id2info, id2cnt, id2bpm = {}, {}, {}
@@ -64,37 +64,35 @@ def main():
             # do attribute/identity
             if id2warmup[id] >= args.warmup_delay:
                 # attribute
-                gender, age, emotion = get_attr(id, id2info, crop_bgr)
+                age, gender = get_age_gender(id, id2info, crop_bgr)
                 color = (0, 0, 255) if gender.startswith('Male') else (255, 0, 0)
-                info_box = draw_attr(info_box, gender, age, emotion, color)
+                # draw
+                info_box = draw_attr(info_box, gender, color, 1)
+                info_box = draw_attr(info_box, age, color, 2)
 
                 # identity
                 if do_identity(df):
                     # Already extracted
                     if id in id2identity:
-                        suspect_name, label, best_similarity = id2identity[id]
-                        # Identity checked
-                        if suspect_name:
-                            label += f"_{best_similarity}%"
-                        # Unknown checked
-                        else:
-                            pass
-
-                        info_box = draw_identity_v2(info_box, suspect_name, label, color)
+                        suspect_name, label = id2identity[id]
+                        info_box = draw_identity(info_box, suspect_name, label, color)
 
                     # Not yet
                     else:
                         try:
                             # match identity
                             suspect_name, best_similarity = match(df, crop_bgr)
-                            label = get_label(suspect_name) if best_similarity >= args.similarity_thresh else f"Unknown{id}"
+                            label = get_label(suspect_name, best_similarity) if best_similarity >= args.similarity_thresh else f"Unknown{id}"
                             id2cnt[id][label] += 1
 
+                            # debug
                             match_info(id, label, best_similarity, id2cnt)
                             
                             if id2cnt[id][label] >= args.match_delay:
-                                id2identity[id] = (suspect_name if not label.startswith('Unknown') else None, 
-                                                    label, best_similarity)
+                                id2identity[id] = (
+                                    suspect_name if not label.startswith('Unknown') else None, 
+                                    label
+                                )
                                 
                                 # Start bpm
                                 id2bpm[id] = get_pulse(args.bpm_limits)
@@ -111,10 +109,13 @@ def main():
                         # start bpm
                         id2bpm[id] = get_pulse(args.bpm_limits)
 
-                # run bpm
+                # run bpm & emotion
                 if id in id2bpm:
-                    text_bpm = id2bpm[id].run(crop_bgr)
+                    text_bpm, emotion = get_bpm_emotion(id2bpm[id], crop_bgr)
+                    # Draw
                     info_box = draw_bpm(info_box, crop_bgr, text_bpm, id2bpm[id], color)
+                    info_box = draw_attr(info_box, emotion, color, 3)
+                    
 
             # 高乘載管制:1
             break

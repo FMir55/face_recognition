@@ -44,11 +44,6 @@ def prune(x0, y0, x1, y1):
   )
 
 def clean_counter(cnt, ids):
-  '''
-  for id in list(cnt.keys()): 
-    if id not in ids:
-      del cnt[id]
-  '''
   ids2remove = set(cnt.keys()) - set(ids)
   for id in ids2remove: del cnt[id]
 

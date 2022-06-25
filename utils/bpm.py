@@ -3,6 +3,13 @@ import time
 import numpy as np
 
 
+async def get_bpm(loop, processor, crop_bgr):
+    return await loop.run_in_executor(
+        None,
+        processor.run,
+        crop_bgr
+    ) 
+
 class get_pulse(object):
 
     def __init__(self, bpm_limits=[50, 160]):
