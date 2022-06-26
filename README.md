@@ -9,16 +9,6 @@ https://docs.opencv.org/2.4/doc/tutorials/introduction/desktop_java/java_dev_int
 # Menu
 https://docs.google.com/document/d/1pRjQZGKMHvxv_LTAtD7VjiZuotjVR7sqHZ7skZVLYhE/edit?usp=sharing
 
-## v7
-10 sec
-
-## v8
-3 sec
-
-## v9
-2 sec
-
-
 # cd home/mendel/face_recognition
 # cd;rm -rf face_recognition;git clone https://github.com/FMir55/face_recognition;cd face_recognition
 # rm -rf ../face_db/*
