@@ -76,7 +76,7 @@ def get_bpm_emotion(id, id2bpm, id2emotion, crop_bgr, idx_emotion):
         id2emotion[id] = inference_emotion(crop_bgr)
 
 async def match(crop_bgr, cnt):
-    emb = await loop_identity.run_in_executor(
+    emb = loop_identity.run_in_executor(
         None,
         get_embedding, 
         crop_bgr
