@@ -23,11 +23,11 @@ def get_age_gender(id, id2info, img_bgr):
         id2info[id] = {key:None for key in ['age', 'gender']}
         files = img2files(img_bgr)
         asyncio.run_coroutine_threadsafe(
-            get_face_age(files, id2info[id]),
+            get_face_age(loop_age, files, id2info[id]),
             loop_age
         )
         asyncio.run_coroutine_threadsafe(
-            get_face_gender(files, id2info[id]),
+            get_face_gender(loop_gender, files, id2info[id]),
             loop_gender
         )
         
