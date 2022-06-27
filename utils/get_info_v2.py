@@ -2,7 +2,9 @@ import asyncio
 from collections import Counter
 
 import cv2
+import numpy as np
 import pandas as pd
+import requests
 
 from utils.apis_v3 import get_embedding, get_face_age, get_face_gender
 from utils.bpm import get_pulse, run_bpm
@@ -74,12 +76,26 @@ def get_bpm_emotion(id, id2bpm, id2emotion, crop_bgr, idx_emotion):
     if idx_emotion == 0:
         id2emotion[id] = inference_emotion(crop_bgr)
 
-async def match(crop_bgr, cnt):
+async def match(loop, crop_bgr, cnt,\
+        fname = 'sample.jpg', url = "https://heartrate.ap-mic.com/get_face_embedding"):
+    '''
     emb = await loop_identity.run_in_executor(
         None,
         get_embedding, 
         crop_bgr
     )
+    '''
+    _, encoded_image = cv2.imencode('.jpg', crop_bgr)
+    files = {
+        "image": (fname, encoded_image.tobytes())
+    }
+
+    response = await loop.run_in_executor(
+        None,
+        lambda: requests.post(url, files=files)
+    )
+    emb = np.array(response.json()['embedding'])
+
     df['embedding_sample'] = [emb] * len(df)
     df['distance'] = df.apply(calc_dist, axis = 1)
     candidate = df.sort_values(by = ["distance"]).iloc[0]
@@ -93,14 +109,14 @@ def get_identity(id, id2identity, img_bgr):
     if id not in id2identity:
         id2identity[id] = Counter()
         asyncio.run_coroutine_threadsafe(
-                match(img_bgr, id2identity[id]),
+                match(loop_identity, img_bgr, id2identity[id]),
                 loop_identity
             )
     else:
         most = id2identity[id].most_common(1)
         if len(most) != 0 and most[0][1] < args.match_delay:
             asyncio.run_coroutine_threadsafe(
-                match(img_bgr, id2identity[id]),
+                match(loop_identity, img_bgr, id2identity[id]),
                 loop_identity
             )
 
