@@ -1,16 +1,45 @@
 import asyncio
+from collections import Counter
 
 import cv2
 import pandas as pd
 
 from utils.apis_v3 import get_face_age, get_face_gender
 from utils.bpm import get_bpm
+from utils.config import Args
 from utils.inference_v3 import inference_embedding, inference_emotion
-from utils.similarity_v2 import calc_dist
+from utils.preparation import get_suspects
+from utils.similarity_v2 import calc_dist, get_label
 from utils.thread import get_loop_thread
+
+args = Args()
 
 loop_gender = get_loop_thread()
 loop_age = get_loop_thread()
+loop_identity = get_loop_thread()
+
+# get suspect identities
+suspects = get_suspects(args.path_face_db)
+
+def get_embeddings(suspects):
+    embeddings = []
+    for suspect in suspects:
+        img = cv2.imread(suspect)
+        embeddings.append(
+            (
+                suspect,
+                inference_embedding(img)
+            )
+        )
+    df = pd.DataFrame(embeddings, columns = ['suspect', 'embedding_template'])
+    return df
+
+# get face embeddings
+df = get_embeddings(suspects)
+
+def do_identity():
+  # At least one template exists
+  return df is not None and df.shape[0] > 0
 
 def img2files(img_bgr, fname='sample.jpg'):
     _, encoded_image = cv2.imencode('.jpg', img_bgr)
@@ -30,6 +59,33 @@ def get_age_gender(id, id2info, img_bgr):
             get_face_gender(loop_gender, files, id2info[id]),
             loop_gender
         )
+
+async def match(crop_bgr, cnt):
+    df['embedding_sample'] = [await inference_embedding(crop_bgr)] * len(df)
+    df['distance'] = df.apply(calc_dist, axis = 1)
+    candidate = df.sort_values(by = ["distance"]).iloc[0]
+    suspect_name = candidate['suspect']
+    best_distance = candidate['distance']
+    best_similarity = int((1 - best_distance)* 100)
+    label = get_label(suspect_name, best_similarity) if best_similarity >= args.similarity_thresh else f"Unknown{id}"
+    cnt[(suspect_name, label)] += 1
+
+def get_identity(id, id2identity, img_bgr):
+    if not id in id2identity:
+        id2identity[id] = Counter()
+        asyncio.run_coroutine_threadsafe(
+                match(img_bgr, id2identity[id]),
+                loop_identity
+            )
+    else:
+        most = id2identity[id].most_common(1)
+        if len(most) != 0 and most[0][1] < args.match_delay:
+            asyncio.run_coroutine_threadsafe(
+                match(img_bgr, id2identity[id]),
+                loop_identity
+            )
+
+            
         
     '''
     if id in id2info: 
@@ -85,29 +141,6 @@ def get_bpm_emotion(processor, crop_bgr):
     )
     loop.close()
     return text_bpm, emotion
-
-
-def get_embeddings(suspects):
-    embeddings = []
-    for suspect in suspects:
-        img = cv2.imread(suspect)
-        embeddings.append(
-            (
-                suspect,
-                inference_embedding(img)
-            )
-        )
-    df = pd.DataFrame(embeddings, columns = ['suspect', 'embedding_template'])
-    return df
-
-def match(df, crop_bgr):
-    df['embedding_sample'] = [inference_embedding(crop_bgr)] * len(df)
-    df['distance'] = df.apply(calc_dist, axis = 1)
-    candidate = df.sort_values(by = ["distance"]).iloc[0]
-    suspect_name = candidate['suspect']
-    best_distance = candidate['distance']
-    best_similarity = int((1 - best_distance)* 100)
-    return suspect_name, best_similarity
 
 
     

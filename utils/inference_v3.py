@@ -64,12 +64,12 @@ def prewhiten(x):
     y = (x - mean) / std_adj
     return y
 
-def inference_embedding(cv2_im):
+async def inference_embedding(cv2_im):
     inference_size_emb = input_size(interpreter_emb)
     cv2_im_rgb = cv2.cvtColor(cv2_im, cv2.COLOR_BGR2RGB)
     cv2_im_rgb = cv2.resize(cv2_im_rgb, inference_size_emb)
     aligned_images = prewhiten(cv2_im_rgb[np.newaxis]).astype(np.float32)
-    run_inference(interpreter_emb, aligned_images.tobytes())
+    await run_inference(interpreter_emb, aligned_images.tobytes())
     return output_tensor(interpreter_emb, 0)[0].copy()
 
 

@@ -4,26 +4,17 @@ import cv2
 
 from utils.bpm import get_pulse
 from utils.config import Args
-from utils.debug import match_info
 from utils.draw_v2 import (clean_plot, draw_attr, draw_bpm, draw_identity,
                            get_default_info_box, put_default_text)
-from utils.get_info_v2 import (get_age_gender, get_bpm_emotion, get_embeddings,
-                               match)
+from utils.get_info_v2 import (do_identity, get_age_gender, get_bpm_emotion,
+                               get_identity)
 from utils.inference_v3 import inference_detection
-from utils.preparation import clean_counter, do_identity, get_suspects, prune
-from utils.similarity_v2 import get_label
-from utils.thread import get_loop_thread
+from utils.preparation import clean_counter, prune
 from utils.tracker import convert_detection, get_tracker
 
 args = Args()
 
 def main():
-    '''
-    # threads 
-    loop_identity, loop_emotion, loop_bpm = \
-        [get_loop_thread() for _ in range(5)]
-    '''
-
     # camera
     cap = cv2.VideoCapture(args.camera_idx)
     cap.set(3, 5000)
@@ -32,13 +23,7 @@ def main():
     # tracker
     tracker = get_tracker(args.initialization_delay, args.max_distance_between_points)
 
-    # get suspect identities
-    suspects = get_suspects(args.path_face_db)
-
-    # get face embeddings
-    df = get_embeddings(suspects)
-
-    if do_identity(df): id2identity = {}
+    if do_identity(): id2identity = {}
     id2info, id2cnt, id2bpm = {}, {}, {}
     id2warmup = Counter()
     while cap.isOpened():
@@ -81,13 +66,20 @@ def main():
                 if age:
                     info_box = draw_attr(info_box, age, color, 2)
 
-                '''
                 # identity
-                if do_identity(df):
+                if do_identity():
+                    get_identity(id, id2identity, crop_bgr)
+                    (suspect_name, label), n = id2identity[id].most_common(1)[0] \
+                        if id in id2identity and len(id2identity[id]) != 0 else \
+                        ((None, f"Unknown{id}"), 0)
+
+                    info_box = draw_identity(info_box, suspect_name, label, color)
+
+                    '''
                     # Already extracted
                     if id in id2identity:
                         suspect_name, label = id2identity[id]
-                        info_box = draw_identity(info_box, suspect_name, label, color)
+                        
 
                     # Not yet
                     else:
@@ -113,29 +105,32 @@ def main():
                                 del id2cnt[id]
                         except Exception as err:
                             print(str(err))
+                    '''
 
                 # without identity
                 else:
+                    pass
+                    '''
                     # attribute complete & bpm not started
                     if id in id2info and id not in id2bpm:
                         # start bpm
                         id2bpm[id] = get_pulse(args.bpm_limits)
-                
+                    '''
 
+                '''
                 # run bpm & emotion
                 if id in id2bpm:
                     text_bpm, emotion = get_bpm_emotion(id2bpm[id], crop_bgr)
                     # Draw
                     info_box = draw_bpm(info_box, crop_bgr, text_bpm, id2bpm[id], color)
                     info_box = draw_attr(info_box, emotion, color, 3)
-                '''
-                    
+                ''' 
 
             # 高乘載管制:1
             break
         
         clean_counter(id2warmup, ids)
-        if do_identity(df): clean_counter(id2identity, ids)
+        if do_identity(): clean_counter(id2identity, ids)
         clean_plot(id2bpm, ids)
         clean_counter(id2bpm, ids)
 
