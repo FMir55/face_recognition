@@ -81,6 +81,6 @@ class Args:
     face_known = cv2.imread(path_unknown)
 
     # emotion delay
-    delay_emotion = 5
+    delay_emotion = 10
 
 

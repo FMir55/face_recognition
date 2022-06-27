@@ -76,14 +76,9 @@ def get_bpm_emotion(id, id2bpm, id2emotion, crop_bgr, idx_emotion):
     if idx_emotion == 0:
         id2emotion[id] = inference_emotion(crop_bgr)
 
-async def match(loop, crop_bgr, cnt,\
+async def match(loop, crop_bgr, id, id2identity,\
         fname = 'sample.jpg', url = "https://heartrate.ap-mic.com/get_face_embedding"):
-    '''
-    emb = await loop_identity.run_in_executor(
-        None,
-        get_embedding, 
-        crop_bgr
-    )
+
     '''
     _, encoded_image = cv2.imencode('.jpg', crop_bgr)
     files = {
@@ -95,6 +90,9 @@ async def match(loop, crop_bgr, cnt,\
         lambda: requests.post(url, files=files)
     )
     emb = np.array(response.json()['embedding'])
+    '''
+    
+    emb = inference_embedding_prep(crop_bgr)
 
     df['embedding_sample'] = [emb] * len(df)
     df['distance'] = df.apply(calc_dist, axis = 1)
@@ -103,20 +101,20 @@ async def match(loop, crop_bgr, cnt,\
     best_distance = candidate['distance']
     best_similarity = int((1 - best_distance)* 100)
     label = get_label(suspect_name, best_similarity) if best_similarity >= args.similarity_thresh else f"Unknown{id}"
-    cnt[(suspect_name, label)] += 1
+    id2identity[id][(suspect_name, label)] += 1
 
 def get_identity(id, id2identity, img_bgr):
     if id not in id2identity:
         id2identity[id] = Counter()
         asyncio.run_coroutine_threadsafe(
-                match(loop_identity, img_bgr, id2identity[id]),
+                match(loop_identity, img_bgr, id, id2identity),
                 loop_identity
             )
     else:
         most = id2identity[id].most_common(1)
         if len(most) != 0 and most[0][1] < args.match_delay:
             asyncio.run_coroutine_threadsafe(
-                match(loop_identity, img_bgr, id2identity[id]),
+                match(loop_identity, img_bgr, id, id2identity),
                 loop_identity
             )
 
