@@ -7,7 +7,10 @@ from utils.apis_v3 import get_face_age, get_face_gender
 from utils.bpm import get_bpm
 from utils.inference_v3 import inference_embedding, inference_emotion
 from utils.similarity_v2 import calc_dist
+from utils.thread import get_loop_thread
 
+loop_gender = get_loop_thread()
+loop_age = get_loop_thread()
 
 def img2files(img_bgr, fname='sample.jpg'):
     _, encoded_image = cv2.imencode('.jpg', img_bgr)
@@ -20,10 +23,12 @@ def get_age_gender(id, id2info, img_bgr):
         id2info[id] = {key:None for key in ['age', 'gender']}
         files = img2files(img_bgr)
         asyncio.run_coroutine_threadsafe(
-            get_face_age(files, id2info[id])
+            get_face_age(files, id2info[id]),
+            loop_age
         )
         asyncio.run_coroutine_threadsafe(
-            get_face_gender(files, id2info[id])
+            get_face_gender(files, id2info[id]),
+            loop_gender
         )
         
     '''

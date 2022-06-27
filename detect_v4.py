@@ -18,9 +18,11 @@ from utils.tracker import convert_detection, get_tracker
 args = Args()
 
 def main():
+    '''
     # threads 
-    loop_gender, loop_age, loop_identity, loop_emotion, loop_bpm = \
+    loop_identity, loop_emotion, loop_bpm = \
         [get_loop_thread() for _ in range(5)]
+    '''
 
     # camera
     cap = cv2.VideoCapture(args.camera_idx)
