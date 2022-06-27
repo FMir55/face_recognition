@@ -5,7 +5,7 @@ import cv2
 import pandas as pd
 import requests
 
-from utils.apis_v3 import get_embedding, get_face_age, get_face_gender
+from utils.apis_v3 import get_face_age, get_face_gender
 from utils.bpm import get_pulse, run_bpm
 from utils.config import Args
 from utils.inference_v3 import inference_embedding_prep, inference_emotion
@@ -18,7 +18,6 @@ args = Args()
 loop_gender = get_loop_thread()
 loop_age = get_loop_thread()
 loop_identity = get_loop_thread()
-# loop_emotion = get_loop_thread()
 loop_bpm = get_loop_thread()
 
 def get_embeddings():
@@ -39,8 +38,8 @@ def get_embeddings():
 df = get_embeddings()
 
 def do_identity():
-  # At least one template exists
-  return df is not None and df.shape[0] > 0
+    # At least one template exists
+    return df is not None and df.shape[0] > 0
 
 def img2files(img_bgr, fname='sample.jpg'):
     _, encoded_image = cv2.imencode('.jpg', img_bgr)
@@ -75,8 +74,7 @@ def get_bpm_emotion(id, id2bpm, id2emotion, crop_bgr, idx_emotion):
     if idx_emotion == 0:
         id2emotion[id] = inference_emotion(crop_bgr)
 
-async def match(loop, crop_bgr, id, id2identity,\
-        fname = 'sample.jpg', url = "https://heartrate.ap-mic.com/get_face_embedding"):
+async def match(loop, crop_bgr, id, id2identity):
 
     emb = inference_embedding_prep(crop_bgr)
 
