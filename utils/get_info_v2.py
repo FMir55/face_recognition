@@ -17,26 +17,22 @@ args = Args()
 
 loop_gender = get_loop_thread()
 loop_age = get_loop_thread()
+'''
 loop_identity = get_loop_thread()
 loop_emotion = get_loop_thread()
+'''
 loop_bpm = get_loop_thread()
 
-def get_embeddings():
-    # get suspect identities
-    suspects = get_suspects(args.path_face_db)
-
-    loop = asyncio.get_event_loop()
-    tasks = [
-        loop.create_task(inference_embedding_prep(loop_identity, cv2.imread(suspect))) \
-        for suspect in suspects
-    ]
-    results = loop.run_until_complete(
-        asyncio.gather(
-            *tasks, 
-            return_exceptions=True
+def get_embeddings(suspects):
+    embeddings = []
+    for suspect in suspects:
+        img = cv2.imread(suspect)
+        embeddings.append(
+            (
+                suspect,
+                inference_embedding_prep(img)
+            )
         )
-    ) 
-    embeddings = list(zip(suspects, results))
     df = pd.DataFrame(embeddings, columns = ['suspect', 'embedding_template'])
     return df
 
@@ -112,41 +108,6 @@ def get_identity(id, id2identity, img_bgr):
                 match(img_bgr, id2identity[id]),
                 loop_identity
             )
-
-            
-        
-    '''
-    if id in id2info: 
-        age, gender = id2info[id].values()
-    else:
-        try:
-            loop = asyncio.get_event_loop()
-            files = img2files(img_bgr)
-            tasks = [
-                loop.create_task(get_face_age(loop, files)),
-                loop.create_task(get_face_gender(loop, files))
-            ]
-            
-            age, gender = loop.run_until_complete(
-                asyncio.gather(
-                    *tasks, 
-                    return_exceptions=True
-                )
-            )
-            loop.close()
-            id2info[id] = {
-                        "age" : age, 
-                        "gender" : gender
-                    }
-        except Exception as err:
-            print(str(err))
-            age, gender = '', ''
-
-    return (
-        f"{age} y",
-        f"{gender}({'男' if gender == 'Male' else '女'})"
-    )
-    '''
 
 
     

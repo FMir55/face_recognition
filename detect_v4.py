@@ -66,6 +66,7 @@ def main():
                 if age:
                     info_box = draw_attr(info_box, age, color, 2)
 
+                '''
                 # bpm & emotion
                 get_bpm_emotion(id, id2bpm, id2emotion, crop_bgr)
                 text_bpm = id2bpm[id].text
@@ -73,11 +74,12 @@ def main():
                 # draw
                 info_box = draw_bpm(info_box, crop_bgr, text_bpm, id2bpm[id], color)
                 info_box = draw_attr(info_box, emotion, color, 3)
-
+                '''
+                """
                 # identity
                 if do_identity():
                     get_identity(id, id2identity, crop_bgr)
-                    (suspect_name, label), n = id2identity[id].most_common(1)[0] \
+                    (suspect_name, label), _ = id2identity[id].most_common(1)[0] \
                         if id in id2identity and len(id2identity[id]) != 0 else \
                         ((None, f"Unknown{id}"), 0)
 
@@ -127,6 +129,7 @@ def main():
                         # start bpm
                         id2bpm[id] = get_pulse(args.bpm_limits)
                     '''
+                """
 
                 '''
                 # run bpm & emotion
