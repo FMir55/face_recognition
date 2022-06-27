@@ -66,7 +66,6 @@ def main():
                 if age:
                     info_box = draw_attr(info_box, age, color, 2)
 
-                '''
                 # bpm & emotion
                 get_bpm_emotion(id, id2bpm, id2emotion, crop_bgr)
                 text_bpm = id2bpm[id].text

@@ -80,3 +80,7 @@ class Args:
     path_unknown = 'imgs/unknown.png'
     face_known = cv2.imread(path_unknown)
 
+    # emotion delay
+    delay_emotion = 5
+
+

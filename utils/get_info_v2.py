@@ -67,17 +67,20 @@ def get_bpm_emotion(id, id2bpm, id2emotion, crop_bgr):
     if id not in id2bpm:
         id2bpm[id] = get_pulse(args.bpm_limits)
     if id not in id2emotion:
-        id2emotion = ''
+        id2emotion[id] = ''
 
     asyncio.run_coroutine_threadsafe(
             run_bpm(loop_bpm, id2bpm[id], crop_bgr),
             loop_bpm
         )
-
+    
+    id2emotion[id] = inference_emotion(crop_bgr)
+    '''
     asyncio.run_coroutine_threadsafe(
             inference_emotion(loop_emotion, id2emotion[id], crop_bgr),
             loop_emotion
         )
+    '''
 
 async def match(crop_bgr, cnt):
     # emb = await inference_embedding(crop_bgr)
