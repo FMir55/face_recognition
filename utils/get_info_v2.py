@@ -9,7 +9,7 @@ from utils.bpm import get_pulse, run_bpm
 from utils.config import Args
 from utils.inference_v3 import (inference_embedding, inference_embedding_prep,
                                 inference_emotion)
-from utils.preparation import get_suspects
+from utils.preparation_v2 import get_suspects
 from utils.similarity_v2 import calc_dist, get_label
 from utils.thread import get_loop_thread
 

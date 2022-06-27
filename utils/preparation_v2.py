@@ -3,6 +3,9 @@ from pathlib import Path
 
 import numpy as np
 
+from utils.config import Args
+
+args = Args()
 
 def mkdir(path):
   if not path.is_dir():
@@ -14,7 +17,7 @@ def get_legal_fname(path_identity, identity):
     if not fname.exists():
       return fname
 
-def get_suspects(path):
+def get_suspects(path=args.path_face_db):
   suspects = []
   #check passed db folder exists
   if path.is_dir():
