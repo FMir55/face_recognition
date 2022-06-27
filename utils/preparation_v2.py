@@ -46,6 +46,6 @@ def prune(x0, y0, x1, y1):
     min(int(y_mid + h/2), y1)
   )
 
-def clean_counter(cnt, ids):
+def clean_dict(cnt, ids):
   ids2remove = set(cnt.keys()) - set(ids)
   for id in ids2remove: del cnt[id]

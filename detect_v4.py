@@ -4,12 +4,12 @@ from itertools import cycle
 import cv2
 
 from utils.config import Args
-from utils.draw_v2 import (clean_plot, draw_attr, draw_bpm, draw_identity,
+from utils.draw_v2 import (draw_attr, draw_bpm, draw_identity,
                            get_default_info_box, put_default_text)
 from utils.get_info_v2 import (do_identity, get_age_gender, get_bpm_emotion,
                                get_identity)
 from utils.inference_v3 import inference_detection
-from utils.preparation import clean_counter, prune
+from utils.preparation_v2 import clean_dict, prune
 from utils.tracker import convert_detection, get_tracker
 
 args = Args()
@@ -76,6 +76,12 @@ def main():
                 # draw
                 info_box = draw_bpm(info_box, crop_bgr, text_bpm, id2bpm[id], color)
                 info_box = draw_attr(info_box, emotion, color, 3)
+                
+                '''
+                # identity
+                if do_identity():
+                    get_identity(id, id2identity, crop_bgr)
+                '''
                 """
                 # identity
                 if do_identity():
@@ -128,23 +134,13 @@ def main():
                         id2bpm[id] = get_pulse(args.bpm_limits)
                 """
 
-                '''
-                # run bpm & emotion
-                if id in id2bpm:
-                    text_bpm, emotion = get_bpm_emotion(id2bpm[id], crop_bgr)
-                    # Draw
-                    info_box = draw_bpm(info_box, crop_bgr, text_bpm, id2bpm[id], color)
-                    info_box = draw_attr(info_box, emotion, color, 3)
-                ''' 
-
             # 高乘載管制:1
             break
         
-        clean_counter(id2warmup, ids)
-        if do_identity(): clean_counter(id2identity, ids)
-        clean_plot(id2bpm, ids)
-        clean_counter(id2bpm, ids)
-        clean_counter(id2emotion, ids)
+        clean_dict(id2warmup, ids)
+        if do_identity(): clean_dict(id2identity, ids)
+        clean_dict(id2bpm, ids)
+        clean_dict(id2emotion, ids)
 
         if (info_box == get_default_info_box(w_new)).all():
             info_box = put_default_text(info_box)

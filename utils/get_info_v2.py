@@ -4,11 +4,10 @@ from collections import Counter
 import cv2
 import pandas as pd
 
-from utils.apis_v3 import get_face_age, get_face_gender
+from utils.apis_v3 import get_embedding, get_face_age, get_face_gender
 from utils.bpm import get_pulse, run_bpm
 from utils.config import Args
-from utils.inference_v3 import (inference_embedding, inference_embedding_prep,
-                                inference_emotion)
+from utils.inference_v3 import inference_embedding_prep, inference_emotion
 from utils.preparation_v2 import get_suspects
 from utils.similarity_v2 import calc_dist, get_label
 from utils.thread import get_loop_thread
@@ -17,13 +16,32 @@ args = Args()
 
 loop_gender = get_loop_thread()
 loop_age = get_loop_thread()
-'''
 loop_identity = get_loop_thread()
-loop_emotion = get_loop_thread()
-'''
+# loop_emotion = get_loop_thread()
 loop_bpm = get_loop_thread()
 
 def get_embeddings():
+    suspects = get_suspects()
+
+    tasks = [
+        loop_identity.create_task(
+            get_embedding(loop_identity, cv2.imread(suspect))
+            ) \
+        for suspect in suspects
+    ]
+
+    results = loop_identity.run_until_complete(
+        asyncio.gather(
+            *tasks, 
+            return_exceptions=True
+        )
+    ) 
+
+    embeddings = list(zip(suspects, results))
+    df = pd.DataFrame(embeddings, columns = ['suspect', 'embedding_template'])
+    return df
+    
+    '''
     suspects = get_suspects()
     embeddings = []
     for suspect in suspects:
@@ -36,6 +54,7 @@ def get_embeddings():
         )
     df = pd.DataFrame(embeddings, columns = ['suspect', 'embedding_template'])
     return df
+    '''
 
 # get face embeddings
 df = get_embeddings()

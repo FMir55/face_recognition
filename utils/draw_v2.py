@@ -64,12 +64,6 @@ def put_default_text(info_box, color = (0, 0, 0), textSize=200):
     info_box = cv2ImgAddText(info_box, '頭', x0, y0+h_line*4, color, textSize)
     return info_box
 
-def clean_plot(cnt, ids):
-    ids2remove = set(cnt.keys()) - set(ids)
-    for id in ids2remove: 
-        plot_title = f"Data display(id={id}) - raw signal (top) and PSD (bottom)"
-        cv2.destroyWindow(plot_title)
-
 def combine(left, right):
     """
     Stack images horizontally.
