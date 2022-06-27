@@ -33,7 +33,7 @@ def get_embeddings():
             return_exceptions=True
         )
     ) 
-    embeddings = tuple(zip(suspects, results))
+    embeddings = list(zip(suspects, results))
     df = pd.DataFrame(embeddings, columns = ['suspect', 'embedding_template'])
     return df
 
