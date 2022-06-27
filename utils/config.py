@@ -76,3 +76,7 @@ class Args:
         for suspect_name in glob.glob(folder + '/*')
     }
 
+    # unknown face
+    path_unknown = 'imgs/unknown.png'
+    face_known = cv2.imread(path_unknown)
+

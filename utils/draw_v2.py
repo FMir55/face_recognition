@@ -38,10 +38,7 @@ def draw_identity(info_box, suspect_name, label, color):
     if suspect_name:
         display_img = args.face_table[suspect_name]
     else:
-        display_img = np.zeros(
-            (w, w, 3),
-            dtype=np.uint8
-        )
+        display_img = args.face_known
     display_img = cv2.resize(display_img, (w, w))
     info_box[:w, :, :3] = display_img
 
