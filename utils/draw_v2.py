@@ -200,6 +200,7 @@ def get_heights(info_box):
     h_line = int((h-w-h_bpm)/5)
     return h_line, h_bpm
 
+'''
 def draw_identity(suspect_name, label, cv2_im, bbox):
     x0, y0, x1, y1 = bbox
     display_img = cv2.imread(suspect_name)
@@ -263,3 +264,4 @@ def draw_identity(suspect_name, label, cv2_im, bbox):
             cv2.line(cv2_im, (x0+int(w/2)+int(w/4), y1+int(args.pivot_img_size/2)), (x1, y1+int(args.pivot_img_size/2)), (67,67,67),1)
     except Exception as err:
         print(str(err))
+'''
