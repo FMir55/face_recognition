@@ -74,7 +74,7 @@ def main():
                         ((None, f"Unknown{id}"), 0)
 
                     # debug
-                    label += f"_{n}"
+                    label += f"_{id in id2identity}"
                     info_box = draw_identity(info_box, suspect_name, label, color)
 
                     '''
