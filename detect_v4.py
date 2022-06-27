@@ -89,58 +89,6 @@ def main():
                     
                     info_box = draw_identity(info_box, suspect_name, label, color)
 
-                """
-                # identity
-                if do_identity():
-                    get_identity(id, id2identity, crop_bgr)
-                    (suspect_name, label), _ = id2identity[id].most_common(1)[0] \
-                        if id in id2identity and len(id2identity[id]) != 0 else \
-                        ((None, f"Unknown{id}"), 0)
-
-                    # debug
-                    label += f"_{len(id2identity[id]) if id in id2identity else None}"
-                    
-                    info_box = draw_identity(info_box, suspect_name, label, color)
-
-                    # Already extracted
-                    if id in id2identity:
-                        suspect_name, label = id2identity[id]
-                        
-
-                    # Not yet
-                    else:
-                        try:
-                            # match identity
-                            suspect_name, best_similarity = match(df, crop_bgr)
-                            label = get_label(suspect_name, best_similarity) if best_similarity >= args.similarity_thresh else f"Unknown{id}"
-                            id2cnt[id][label] += 1
-
-                            # debug
-                            match_info(id, label, best_similarity, id2cnt)
-                            
-                            if id2cnt[id][label] >= args.match_delay:
-                                id2identity[id] = (
-                                    suspect_name if not label.startswith('Unknown') else None, 
-                                    label
-                                )
-                                
-                                # Start bpm
-                                id2bpm[id] = get_pulse(args.bpm_limits)
-
-                                # End the count
-                                del id2cnt[id]
-                        except Exception as err:
-                            print(str(err))
-
-                # without identity
-                else:
-                    pass
-                    # attribute complete & bpm not started
-                    if id in id2info and id not in id2bpm:
-                        # start bpm
-                        id2bpm[id] = get_pulse(args.bpm_limits)
-                """
-
             # 高乘載管制:1
             break
         
