@@ -64,7 +64,7 @@ def prewhiten(x):
     y = (x - mean) / std_adj
     return y
 
-async def inference_embedding(cv2_im):
+async def inference_embedding(loop, cv2_im):
     inference_size_emb = input_size(interpreter_emb)
     cv2_im_rgb = cv2.cvtColor(cv2_im, cv2.COLOR_BGR2RGB)
     cv2_im_rgb = cv2.resize(cv2_im_rgb, inference_size_emb)

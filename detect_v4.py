@@ -75,6 +75,7 @@ def main():
 
                     # debug
                     label += f"_{len(id2identity[id]) if id in id2identity else None}"
+                    
                     info_box = draw_identity(info_box, suspect_name, label, color)
 
                     '''
