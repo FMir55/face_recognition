@@ -72,7 +72,7 @@ def main():
             if id2warmup[id] >= args.warmup_delay:
                 # attribute
                 get_age_gender(id, id2info, crop_bgr)
-
+                print(id2info)
                 age, gender = id2info['age'], id2info['gender']
                 color = (0, 255, 0) if not gender else\
                         (0, 0, 255) if gender.startswith('Male') else (255, 0, 0)
