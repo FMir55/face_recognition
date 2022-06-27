@@ -21,28 +21,6 @@ loop_age = get_loop_thread()
 loop_bpm = get_loop_thread()
 
 def get_embeddings():
-    loop = asyncio.get_event_loop()
-    suspects = get_suspects()
-
-    tasks = [
-        loop.create_task(
-            get_embedding(loop, cv2.imread(suspect))
-            ) \
-        for suspect in suspects
-    ]
-
-    results = loop.run_until_complete(
-        asyncio.gather(
-            *tasks, 
-            return_exceptions=True
-        )
-    ) 
-
-    embeddings = list(zip(suspects, results))
-    df = pd.DataFrame(embeddings, columns = ['suspect', 'embedding_template'])
-    return df
-
-    '''
     suspects = get_suspects()
     embeddings = []
     for suspect in suspects:
@@ -55,7 +33,6 @@ def get_embeddings():
         )
     df = pd.DataFrame(embeddings, columns = ['suspect', 'embedding_template'])
     return df
-    '''
 
 # get face embeddings
 df = get_embeddings()
