@@ -1,10 +1,15 @@
+import asyncio
+
 import cv2
 import numpy as np
 import requests
 
 
-async def get_embedding(loop, img, \
+async def get_embedding(img, \
     fname = 'sample.jpg', url = "https://heartrate.ap-mic.com/get_face_embedding"):
+
+    loop = asyncio.get_event_loop()
+
     _, encoded_image = cv2.imencode('.jpg', img)
     files = {
         "image": (fname, encoded_image.tobytes())
@@ -25,7 +30,6 @@ async def get_face_age(loop, files, info,\
     )
     age = response.json()['age']
     info['age'] = f"{age} y"
-    
 
 async def get_face_gender(loop, files, info,\
     url="https://heartrate.ap-mic.com/get_face_gender"):

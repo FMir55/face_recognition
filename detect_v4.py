@@ -77,11 +77,9 @@ def main():
                 info_box = draw_bpm(info_box, crop_bgr, text_bpm, id2bpm[id], color)
                 info_box = draw_attr(info_box, emotion, color, 3)
                 
-                '''
                 # identity
                 if do_identity():
                     get_identity(id, id2identity, crop_bgr)
-                '''
                 """
                 # identity
                 if do_identity():

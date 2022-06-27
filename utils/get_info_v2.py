@@ -16,7 +16,8 @@ args = Args()
 
 loop_gender = get_loop_thread()
 loop_age = get_loop_thread()
-# loop_identity = get_loop_thread()
+loop_identity = get_loop_thread()
+loop_identity2 = get_loop_thread()
 # loop_emotion = get_loop_thread()
 loop_bpm = get_loop_thread()
 
@@ -73,18 +74,11 @@ def get_bpm_emotion(id, id2bpm, id2emotion, crop_bgr, idx_emotion):
     
     if idx_emotion == 0:
         id2emotion[id] = inference_emotion(crop_bgr)
-    '''
-    asyncio.run_coroutine_threadsafe(
-            inference_emotion(loop_emotion, id2emotion[id], crop_bgr),
-            loop_emotion
-        )
-    '''
 
 async def match(crop_bgr, cnt):
-    # emb = await inference_embedding(crop_bgr)
     emb = await loop_identity.run_in_executor(
         None,
-        inference_embedding, 
+        get_embedding, 
         crop_bgr
     )
     df['embedding_sample'] = [emb] * len(df)
