@@ -87,7 +87,6 @@ def main():
                     
                     info_box = draw_identity(info_box, suspect_name, label, color)
 
-                    '''
                     # Already extracted
                     if id in id2identity:
                         suspect_name, label = id2identity[id]
@@ -117,17 +116,14 @@ def main():
                                 del id2cnt[id]
                         except Exception as err:
                             print(str(err))
-                    '''
 
                 # without identity
                 else:
                     pass
-                    '''
                     # attribute complete & bpm not started
                     if id in id2info and id not in id2bpm:
                         # start bpm
                         id2bpm[id] = get_pulse(args.bpm_limits)
-                    '''
                 """
 
                 '''
