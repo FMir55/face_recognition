@@ -2,12 +2,11 @@ from collections import Counter
 
 import cv2
 
-from utils.bpm import get_pulse
 from utils.config import Args
 from utils.draw_v2 import (clean_plot, draw_attr, draw_bpm, draw_identity,
                            get_default_info_box, put_default_text)
-from utils.get_info_v2 import (do_identity, get_age_gender, get_bpm_emotion,
-                               get_identity)
+from utils.get_info_v2 import (do_identity, get_age_gender, get_bpm,
+                               get_bpm_emotion, get_identity)
 from utils.inference_v3 import inference_detection
 from utils.preparation import clean_counter, prune
 from utils.tracker import convert_detection, get_tracker
@@ -25,6 +24,7 @@ def main():
 
     if do_identity(): id2identity = {}
     id2info, id2cnt, id2bpm = {}, {}, {}
+    id2emotion = {}
     id2warmup = Counter()
     while cap.isOpened():
         # (980 1280 3)
@@ -65,6 +65,14 @@ def main():
                     info_box = draw_attr(info_box, gender, color, 1)
                 if age:
                     info_box = draw_attr(info_box, age, color, 2)
+
+                # bpm & emotion
+                get_bpm_emotion(id, id2bpm, id2emotion, crop_bgr)
+                text_bpm = id2bpm[id].text
+                emotion = id2emotion[id]
+                # draw
+                info_box = draw_bpm(info_box, crop_bgr, text_bpm, id2bpm[id], color)
+                info_box = draw_attr(info_box, emotion, color, 3)
 
                 # identity
                 if do_identity():
@@ -136,6 +144,7 @@ def main():
         if do_identity(): clean_counter(id2identity, ids)
         clean_plot(id2bpm, ids)
         clean_counter(id2bpm, ids)
+        clean_counter(id2emotion, ids)
 
         if (info_box == get_default_info_box(w_new)).all():
             info_box = put_default_text(info_box)

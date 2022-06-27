@@ -64,12 +64,40 @@ def prewhiten(x):
     y = (x - mean) / std_adj
     return y
 
-async def inference_embedding(loop, cv2_im):
+async def inference_embedding(loop, cv2_im, emotion):
     inference_size_emb = input_size(interpreter_emb)
     cv2_im_rgb = cv2.cvtColor(cv2_im, cv2.COLOR_BGR2RGB)
     cv2_im_rgb = cv2.resize(cv2_im_rgb, inference_size_emb)
     aligned_images = prewhiten(cv2_im_rgb[np.newaxis]).astype(np.float32)
-    await run_inference(interpreter_emb, aligned_images.tobytes())
+    await loop.run_in_executor(
+        None,
+        run_inference, 
+        interpreter_emb, aligned_images.tobytes()
+    )
+    emotion = output_tensor(interpreter_emb, 0)[0].copy()
+
+async def inference_embedding_prep(loop, cv2_im, emotion):
+    inference_size_emb = input_size(interpreter_emb)
+    cv2_im_rgb = cv2.cvtColor(cv2_im, cv2.COLOR_BGR2RGB)
+    cv2_im_rgb = cv2.resize(cv2_im_rgb, inference_size_emb)
+    aligned_images = prewhiten(cv2_im_rgb[np.newaxis]).astype(np.float32)
+    await loop.run_in_executor(
+        None,
+        run_inference, 
+        interpreter_emb, aligned_images.tobytes()
+    )
     return output_tensor(interpreter_emb, 0)[0].copy()
+'''
+async def get_face_age(loop, files, info,\
+    url="https://heartrate.ap-mic.com/get_face_age"):
+
+    # response = await requests.post(url, files=files)
+    response = await loop.run_in_executor(
+        None,
+        lambda: requests.post(url, files=files)
+    )
+    age = response.json()['age']
+    info['age'] = f"{age} y"
+'''
 
 

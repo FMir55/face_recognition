@@ -3,8 +3,8 @@ import time
 import numpy as np
 
 
-async def get_bpm(loop, processor, crop_bgr):
-    return await loop.run_in_executor(
+async def run_bpm(loop, processor, crop_bgr):
+    await loop.run_in_executor(
         None,
         processor.run,
         crop_bgr

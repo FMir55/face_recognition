@@ -5,9 +5,10 @@ import cv2
 import pandas as pd
 
 from utils.apis_v3 import get_face_age, get_face_gender
-from utils.bpm import get_bpm
+from utils.bpm import get_pulse, run_bpm
 from utils.config import Args
-from utils.inference_v3 import inference_embedding, inference_emotion
+from utils.inference_v3 import (inference_embedding, inference_embedding_prep,
+                                inference_emotion)
 from utils.preparation import get_suspects
 from utils.similarity_v2 import calc_dist, get_label
 from utils.thread import get_loop_thread
@@ -17,6 +18,8 @@ args = Args()
 loop_gender = get_loop_thread()
 loop_age = get_loop_thread()
 loop_identity = get_loop_thread()
+loop_emotion = get_loop_thread()
+loop_bpm = get_loop_thread()
 
 def get_embeddings():
     # get suspect identities
@@ -24,7 +27,7 @@ def get_embeddings():
 
     loop = asyncio.get_event_loop()
     tasks = [
-        loop.create_task(inference_embedding(loop_identity, cv2.imread(suspect))) \
+        loop.create_task(inference_embedding_prep(loop_identity, cv2.imread(suspect))) \
         for suspect in suspects
     ]
     results = loop.run_until_complete(
@@ -36,21 +39,6 @@ def get_embeddings():
     embeddings = list(zip(suspects, results))
     df = pd.DataFrame(embeddings, columns = ['suspect', 'embedding_template'])
     return df
-
-    '''
-    embeddings = []
-    for suspect in suspects:
-        img = cv2.imread(suspect)
-        embeddings.append(
-            (
-                suspect,
-                inference_embedding(img)
-            )
-        )
-    df = pd.DataFrame(embeddings, columns = ['suspect', 'embedding_template'])
-    return df
-    '''
-    
 
 # get face embeddings
 df = get_embeddings()
@@ -76,6 +64,22 @@ def get_age_gender(id, id2info, img_bgr):
         asyncio.run_coroutine_threadsafe(
             get_face_gender(loop_gender, files, id2info[id]),
             loop_gender
+        )
+
+def get_bpm_emotion(id, id2bpm, id2emotion, crop_bgr):
+    if id not in id2bpm:
+        id2bpm[id] = get_pulse(args.bpm_limits)
+    if id not in id2emotion:
+        id2emotion = ''
+
+    asyncio.run_coroutine_threadsafe(
+            run_bpm(loop_bpm, id2bpm[id], crop_bgr),
+            loop_bpm
+        )
+
+    asyncio.run_coroutine_threadsafe(
+            inference_emotion(loop_emotion, id2emotion[id], crop_bgr),
+            loop_emotion
         )
 
 async def match(crop_bgr, cnt):
@@ -143,28 +147,6 @@ def get_identity(id, id2identity, img_bgr):
         f"{gender}({'男' if gender == 'Male' else '女'})"
     )
     '''
-
-
-"""
-Legacy
-"""
-
-
-def get_bpm_emotion(processor, crop_bgr):
-    loop = asyncio.get_event_loop()
-    tasks = [
-        loop.create_task(get_bpm(loop, processor, crop_bgr)),
-        loop.create_task(inference_emotion(loop, crop_bgr))
-    ]
-    
-    text_bpm, emotion = loop.run_until_complete(
-        asyncio.gather(
-            *tasks, 
-            return_exceptions=True
-        )
-    )
-    loop.close()
-    return text_bpm, emotion
 
 
     
