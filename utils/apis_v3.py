@@ -4,11 +4,12 @@ import cv2
 import numpy as np
 import requests
 
+from utils.thread import get_loop_thread
+
+loop = get_loop_thread()
 
 async def get_embedding(img, \
     fname = 'sample.jpg', url = "https://heartrate.ap-mic.com/get_face_embedding"):
-
-    loop = asyncio.get_event_loop()
 
     _, encoded_image = cv2.imencode('.jpg', img)
     files = {

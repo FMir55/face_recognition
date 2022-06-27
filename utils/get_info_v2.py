@@ -17,7 +17,6 @@ args = Args()
 loop_gender = get_loop_thread()
 loop_age = get_loop_thread()
 loop_identity = get_loop_thread()
-loop_identity2 = get_loop_thread()
 # loop_emotion = get_loop_thread()
 loop_bpm = get_loop_thread()
 
@@ -76,7 +75,7 @@ def get_bpm_emotion(id, id2bpm, id2emotion, crop_bgr, idx_emotion):
         id2emotion[id] = inference_emotion(crop_bgr)
 
 async def match(crop_bgr, cnt):
-    emb = loop_identity.run_in_executor(
+    emb = await loop_identity.run_in_executor(
         None,
         get_embedding, 
         crop_bgr

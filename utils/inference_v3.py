@@ -64,6 +64,7 @@ def prewhiten(x):
     y = (x - mean) / std_adj
     return y
 
+'''
 async def inference_embedding(loop, cv2_im, emotion):
     inference_size_emb = input_size(interpreter_emb)
     cv2_im_rgb = cv2.cvtColor(cv2_im, cv2.COLOR_BGR2RGB)
@@ -75,6 +76,7 @@ async def inference_embedding(loop, cv2_im, emotion):
         interpreter_emb, aligned_images.tobytes()
     )
     emotion = output_tensor(interpreter_emb, 0)[0].copy()
+'''
 
 def inference_embedding_prep(cv2_im):
     inference_size_emb = input_size(interpreter_emb)
