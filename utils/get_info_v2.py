@@ -61,7 +61,8 @@ def get_age_gender(id, id2info, img_bgr):
         )
 
 async def match(crop_bgr, cnt):
-    df['embedding_sample'] = [await inference_embedding(crop_bgr)] * len(df)
+    emb = await inference_embedding(crop_bgr)
+    df['embedding_sample'] = [emb] * len(df)
     df['distance'] = df.apply(calc_dist, axis = 1)
     candidate = df.sort_values(by = ["distance"]).iloc[0]
     suspect_name = candidate['suspect']
