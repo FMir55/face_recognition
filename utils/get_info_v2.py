@@ -63,7 +63,7 @@ def get_age_gender(id, id2info, img_bgr):
             loop_gender
         )
 
-def get_bpm_emotion(id, id2bpm, id2emotion, crop_bgr):
+def get_bpm_emotion(id, id2bpm, id2emotion, crop_bgr, idx_emotion):
     if id not in id2bpm:
         id2bpm[id] = get_pulse(args.bpm_limits)
     if id not in id2emotion:
@@ -74,7 +74,8 @@ def get_bpm_emotion(id, id2bpm, id2emotion, crop_bgr):
             loop_bpm
         )
     
-    id2emotion[id] = inference_emotion(crop_bgr)
+    if idx_emotion == 0:
+        id2emotion[id] = inference_emotion(crop_bgr)
     '''
     asyncio.run_coroutine_threadsafe(
             inference_emotion(loop_emotion, id2emotion[id], crop_bgr),

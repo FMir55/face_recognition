@@ -1,4 +1,5 @@
 from collections import Counter
+from itertools import cycle
 
 import cv2
 
@@ -12,6 +13,8 @@ from utils.preparation import clean_counter, prune
 from utils.tracker import convert_detection, get_tracker
 
 args = Args()
+
+c_emotion = cycle(range(args.delay_emotion))
 
 def main():
     # camera
@@ -67,7 +70,7 @@ def main():
                     info_box = draw_attr(info_box, age, color, 2)
 
                 # bpm & emotion
-                get_bpm_emotion(id, id2bpm, id2emotion, crop_bgr)
+                get_bpm_emotion(id, id2bpm, id2emotion, crop_bgr, next(c_emotion))
                 text_bpm = id2bpm[id].text
                 emotion = id2emotion[id]
                 # draw
