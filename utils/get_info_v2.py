@@ -16,21 +16,22 @@ args = Args()
 
 loop_gender = get_loop_thread()
 loop_age = get_loop_thread()
-loop_identity = get_loop_thread()
+# loop_identity = get_loop_thread()
 # loop_emotion = get_loop_thread()
 loop_bpm = get_loop_thread()
 
 def get_embeddings():
+    loop = asyncio.get_event_loop()
     suspects = get_suspects()
 
     tasks = [
-        loop_identity.create_task(
-            get_embedding(loop_identity, cv2.imread(suspect))
+        loop.create_task(
+            get_embedding(loop, cv2.imread(suspect))
             ) \
         for suspect in suspects
     ]
 
-    results = loop_identity.run_until_complete(
+    results = loop.run_until_complete(
         asyncio.gather(
             *tasks, 
             return_exceptions=True
@@ -40,7 +41,7 @@ def get_embeddings():
     embeddings = list(zip(suspects, results))
     df = pd.DataFrame(embeddings, columns = ['suspect', 'embedding_template'])
     return df
-    
+
     '''
     suspects = get_suspects()
     embeddings = []
