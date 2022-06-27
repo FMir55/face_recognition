@@ -73,6 +73,8 @@ def main():
                         if id in id2identity and len(id2identity[id]) != 0 else \
                         ((None, f"Unknown{id}"), 0)
 
+                    # debug
+                    label += f"_{n}"
                     info_box = draw_identity(info_box, suspect_name, label, color)
 
                     '''

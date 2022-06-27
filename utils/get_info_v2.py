@@ -71,7 +71,7 @@ async def match(crop_bgr, cnt):
     cnt[(suspect_name, label)] += 1
 
 def get_identity(id, id2identity, img_bgr):
-    if not id in id2identity:
+    if id not in id2identity:
         id2identity[id] = Counter()
         asyncio.run_coroutine_threadsafe(
                 match(img_bgr, id2identity[id]),
