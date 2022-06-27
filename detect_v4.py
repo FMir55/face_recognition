@@ -26,8 +26,7 @@ def main():
     tracker = get_tracker(args.initialization_delay, args.max_distance_between_points)
 
     if do_identity(): id2identity = {}
-    id2info, id2cnt, id2bpm = {}, {}, {}
-    id2emotion = {}
+    id2info, id2emotion, id2bpm = {}, {}, {}
     id2warmup = Counter()
     while cap.isOpened():
         # (980 1280 3)
@@ -47,8 +46,6 @@ def main():
         for tracked_object in tracked_objects:
             id = tracked_object.id
             ids.append(id)
-            if id not in id2cnt: 
-                id2cnt[id] = Counter()
             id2warmup[id] += 1
 
             x0, y0, x1, y1 = tracked_object.last_detection.points.flatten()
