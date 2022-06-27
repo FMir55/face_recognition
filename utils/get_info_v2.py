@@ -91,8 +91,11 @@ async def match(loop, crop_bgr, id, id2identity,\
     )
     emb = np.array(response.json()['embedding'])
     '''
-    
-    emb = inference_embedding_prep(crop_bgr)
+    emb = await loop.run_in_executor(
+        None,
+        get_embedding,
+        crop_bgr
+    )
 
     df['embedding_sample'] = [emb] * len(df)
     df['distance'] = df.apply(calc_dist, axis = 1)
