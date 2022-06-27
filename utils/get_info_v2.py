@@ -79,12 +79,18 @@ def get_bpm_emotion(id, id2bpm, id2emotion, crop_bgr, idx_emotion):
 async def match(loop, crop_bgr, id, id2identity,\
         fname = 'sample.jpg', url = "https://heartrate.ap-mic.com/get_face_embedding"):
 
-    files = img2files(crop_bgr)
+    _, encoded_image = cv2.imencode('.jpg', crop_bgr)
+    files = {
+        "image": (fname, encoded_image.tobytes())
+    }
+
     response = await loop.run_in_executor(
         None,
         lambda: requests.post(url, files=files)
     )
     emb = np.array(response.json()['embedding'])
+    
+    # emb = inference_embedding_prep(crop_bgr)
 
     df['embedding_sample'] = [emb] * len(df)
     df['distance'] = df.apply(calc_dist, axis = 1)
