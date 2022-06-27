@@ -18,10 +18,26 @@ loop_gender = get_loop_thread()
 loop_age = get_loop_thread()
 loop_identity = get_loop_thread()
 
-# get suspect identities
-suspects = get_suspects(args.path_face_db)
+def get_embeddings():
+    # get suspect identities
+    suspects = get_suspects(args.path_face_db)
 
-def get_embeddings(suspects):
+    loop = asyncio.get_event_loop()
+    tasks = [
+        loop.create_task(inference_embedding(loop_identity, cv2.imread(suspect))) \
+        for suspect in suspects
+    ]
+    results = loop.run_until_complete(
+        asyncio.gather(
+            *tasks, 
+            return_exceptions=True
+        )
+    ) 
+    embeddings = tuple(zip(suspects, results))
+    df = pd.DataFrame(embeddings, columns = ['suspect', 'embedding_template'])
+    return df
+
+    '''
     embeddings = []
     for suspect in suspects:
         img = cv2.imread(suspect)
@@ -33,9 +49,11 @@ def get_embeddings(suspects):
         )
     df = pd.DataFrame(embeddings, columns = ['suspect', 'embedding_template'])
     return df
+    '''
+    
 
 # get face embeddings
-df = get_embeddings(suspects)
+df = get_embeddings()
 
 def do_identity():
   # At least one template exists
