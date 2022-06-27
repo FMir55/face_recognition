@@ -23,7 +23,8 @@ loop_emotion = get_loop_thread()
 '''
 loop_bpm = get_loop_thread()
 
-def get_embeddings(suspects):
+def get_embeddings():
+    suspects = get_suspects()
     embeddings = []
     for suspect in suspects:
         img = cv2.imread(suspect)
