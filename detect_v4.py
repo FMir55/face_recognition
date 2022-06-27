@@ -80,6 +80,15 @@ def main():
                 # identity
                 if do_identity():
                     get_identity(id, id2identity, crop_bgr)
+                    (suspect_name, label), _ = id2identity[id].most_common(1)[0] \
+                        if id in id2identity and len(id2identity[id]) != 0 else \
+                        ((None, f"Unknown{id}"), 0)
+
+                    # debug
+                    label += f"_{len(id2identity[id]) if id in id2identity else None}"
+                    
+                    info_box = draw_identity(info_box, suspect_name, label, color)
+
                 """
                 # identity
                 if do_identity():
