@@ -5,8 +5,8 @@ import cv2
 from utils.config import Args
 from utils.draw_v2 import (clean_plot, draw_attr, draw_bpm, draw_identity,
                            get_default_info_box, put_default_text)
-from utils.get_info_v2 import (do_identity, get_age_gender, get_bpm,
-                               get_bpm_emotion, get_identity)
+from utils.get_info_v2 import (do_identity, get_age_gender, get_bpm_emotion,
+                               get_identity)
 from utils.inference_v3 import inference_detection
 from utils.preparation import clean_counter, prune
 from utils.tracker import convert_detection, get_tracker
