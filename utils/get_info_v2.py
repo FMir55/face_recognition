@@ -3,7 +3,7 @@ import asyncio
 import cv2
 import pandas as pd
 
-from utils.apis_v2 import get_face_age, get_face_gender
+from utils.apis_v3 import get_face_age, get_face_gender
 from utils.bpm import get_bpm
 from utils.inference_v3 import inference_embedding, inference_emotion
 from utils.similarity_v2 import calc_dist
