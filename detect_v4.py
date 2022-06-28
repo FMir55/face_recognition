@@ -58,7 +58,7 @@ def main():
                 # attribute
                 get_age_gender(id, id2info, crop_bgr)
                 age, gender = id2info[id]['age'], id2info[id]['gender']
-                color = (0, 255, 0) if not gender else\
+                color = (0, 0, 0) if not gender else\
                         (0, 0, 255) if gender.startswith('Male') else (255, 0, 0)
                 # draw
                 if gender:
@@ -82,7 +82,7 @@ def main():
                         ((None, f"Unknown{id}"), 0)
 
                     # debug
-                    label += f"_{len(id2identity[id]) if id in id2identity else None}"
+                    label += f"_({len(id2identity[id]) if id in id2identity else None})"
                     
                     info_box = draw_identity(info_box, suspect_name, label, color)
 
