@@ -84,7 +84,7 @@ async def match(loop, crop_bgr, id, id2identity):
     suspect_name = candidate['suspect']
     best_distance = candidate['distance']
     best_similarity = int((1 - best_distance)* 100)
-    label = get_label(suspect_name, best_similarity) if best_similarity >= args.similarity_thresh else f"Unknown{id}"
+    label = get_label(suspect_name, best_similarity) if best_similarity >= args.similarity_thresh else f"Guest{id}"
     suspect_name = suspect_name if best_similarity >= args.similarity_thresh else None
     id2identity[id][(suspect_name, label)] += 1
 
