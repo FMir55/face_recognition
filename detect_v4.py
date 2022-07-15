@@ -2,7 +2,7 @@
 import time
 from datetime import datetime
 
-path_to_file = "aaa.txt"
+path_to_file = "bbb.txt"
 while True:
     with open(path_to_file, "a") as f:
         f.write("The current timestamp is: " + str(datetime.now()))

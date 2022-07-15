@@ -1,16 +1,12 @@
 [Unit]
 Description=Execute detect_v4.py systemd service.
-After=weston.target
+After=network.target
 
 [Service]
-Environment=DISPLAY=:0
-PAMName=login
-Type=simple
-User=mendel
-WorkingDirectory=/home/mendel
-ExecStart=/usr/bin/python3 /home/mendel/face_recognition/detect_v4.py
-Restart=always
-ReStartSec=600
+Type=idle
+Restart=on-failure
+User=root
+ExecStart=/bin/bash -c 'cd /home/mendel/face_recognition/ && python3 detect_v4.py'
 
 [Install]
 WantedBy=multi-user.target
