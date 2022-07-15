@@ -10,6 +10,7 @@ User=mendel
 WorkingDirectory=/home/mendel
 ExecStart=/usr/bin/python3 home/mendel/face_recognition/detect_v4.py
 Restart=always
+ReStartSec=600
 
 [Install]
 WantedBy=multi-user.target
