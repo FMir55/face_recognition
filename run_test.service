@@ -8,7 +8,7 @@ PAMName=login
 Type=simple
 User=mendel
 WorkingDirectory=/home/mendel
-ExecStart=/usr/bin/python3 /home/mendel/face_recognition/detect_v4.py
+ExecStart=/usr/bin/python3 /home/mendel/face_recognition/test_auto.py
 Restart=always
 ReStartSec=600
 
