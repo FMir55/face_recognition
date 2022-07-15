@@ -4,7 +4,6 @@ Description=Execute detect_v5.py systemd service.
 [Service]
 Type=oneshot
 WorkingDirectory = /home/mendel/face_recognition/
-Restart=on-failure
 User=mendel
 ExecStart=python3 detect_v5.py
 
