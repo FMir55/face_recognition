@@ -11,6 +11,5 @@ WorkingDirectory = /home/mendel/face_recognition/
 ExecStart=python3 detect_v5.py
 Restart=always
 
-
 [Install]
 WantedBy=multi-user.target
