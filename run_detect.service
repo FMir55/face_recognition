@@ -1,6 +1,7 @@
 [Unit]
 Description=Execute detect_v4.py systemd service.
-After=weston.target
+Wants=network-online.target
+After=network-online.target
 
 [Service]
 PAMName=login
