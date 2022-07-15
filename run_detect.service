@@ -1,12 +1,12 @@
 [Unit]
 Description=Execute detect_v5.py systemd service.
-After=network.target
 
 [Service]
-Type=idle
+Type=oneshot
+WorkingDirectory = /home/mendel/face_recognition/
 Restart=on-failure
-User=root
-ExecStart=/bin/bash -c 'cd /home/mendel/face_recognition/ && python3 detect_v5.py'
+User=mendel
+ExecStart=python3 detect_v5.py
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=network.target
