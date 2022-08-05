@@ -16,8 +16,8 @@ https://docs.google.com/document/d/1pRjQZGKMHvxv_LTAtD7VjiZuotjVR7sqHZ7skZVLYhE/
 # python3.8 -m pip install PACKAGES
 
 # Install gsettings
-## sudo apt-get isntall libglib2.0-bin
-## sudo apt-get isntall gnome-settings-daemon
+## sudo apt-get install libglib2.0-bin
+## sudo apt-get install gnome-settings-daemon
 
 # Disable screen dimming when idle
 ## gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-battery-timeout 0
