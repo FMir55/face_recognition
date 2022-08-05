@@ -14,3 +14,11 @@ https://docs.google.com/document/d/1pRjQZGKMHvxv_LTAtD7VjiZuotjVR7sqHZ7skZVLYhE/
 # rm -rf ../face_db/*
 
 # python3.8 -m pip install PACKAGES
+
+# Install gsettings
+## sudo apt-get isntall libglib2.0-bin
+
+# Disable screen dimming when idle
+## gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-battery-timeout 0
+## gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-timeout 0
+## 
