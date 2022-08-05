@@ -21,4 +21,4 @@ https://docs.google.com/document/d/1pRjQZGKMHvxv_LTAtD7VjiZuotjVR7sqHZ7skZVLYhE/
 # Disable screen dimming when idle
 ## gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-battery-timeout 0
 ## gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-timeout 0
-## 
+## gsettings set org.gnome.settings-daemon.plugins.power idle-dim false
