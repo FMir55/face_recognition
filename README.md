@@ -27,4 +27,6 @@ https://docs.google.com/document/d/1pRjQZGKMHvxv_LTAtD7VjiZuotjVR7sqHZ7skZVLYhE/
 ## gsettings set org.gnome.settings-daemon.plugins.power idle-dim false
 ## gsettings set org.gnome.settings-daemon.plugins.power idle-dim-ac false
 ## gsettings set org.gnome.settings-daemon.plugins.power idle-dim-battery false
+## gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac false
 ## gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-battery false
+
