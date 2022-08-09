@@ -20,6 +20,11 @@ https://docs.google.com/document/d/1pRjQZGKMHvxv_LTAtD7VjiZuotjVR7sqHZ7skZVLYhE/
 ## sudo apt-get install gnome-settings-daemon
 
 # Disable screen dimming when idle
-## gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-battery-timeout 0
-## gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-timeout 0
+## sudo -u gdm gsettings list-recursively org.gnome.settings-daemon.plugins.power
+
+## 
+
 ## gsettings set org.gnome.settings-daemon.plugins.power idle-dim false
+## gsettings set org.gnome.settings-daemon.plugins.power idle-dim-ac false
+## gsettings set org.gnome.settings-daemon.plugins.power idle-dim-battery false
+## gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-battery false
